@@ -1,5 +1,5 @@
 export default abstract class Repository {
-  constructor(data: Object[]) {}
+  abstract data: any[];
 
   abstract find(element: Object): Object | undefined;
   abstract push(element: any): void;
