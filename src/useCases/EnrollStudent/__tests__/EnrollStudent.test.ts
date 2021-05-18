@@ -1,10 +1,12 @@
+import Repository from '../../../repositories/Repository';
 import EnrollStudent from '../EnrollStudent';
 import { ValidationError } from '../Errors';
 import { StudentsRepositoryMock } from './StudentsRepositoryMock';
 
 describe('EnrollStudent', () => {
-  const studentRepository = new StudentsRepositoryMock();
-  const enrollStudent = new EnrollStudent(studentRepository);
+  const factoryEnrollStudent = (studentRepository: Repository = new StudentsRepositoryMock()): EnrollStudent => {
+    return new EnrollStudent(studentRepository);
+  }
 
   test("Should not enroll without valid student name", () => {
     const enrollmentRequest = {
@@ -15,7 +17,7 @@ describe('EnrollStudent', () => {
     }
 
     expect(() => {
-      enrollStudent.execute(enrollmentRequest);
+      factoryEnrollStudent().execute(enrollmentRequest);
     }).toThrow(new ValidationError("Invalid student name"));
   });
 
@@ -28,7 +30,7 @@ describe('EnrollStudent', () => {
     }
 
     expect(() => {
-      enrollStudent.execute(enrollmentRequest);
+      factoryEnrollStudent().execute(enrollmentRequest);
     }).toThrow(new ValidationError("Invalid student cpf"));
   });
 
@@ -38,6 +40,7 @@ describe('EnrollStudent', () => {
       cpf: "832.081.519-34"
     }
 
+    const studentRepository = new StudentsRepositoryMock();
     studentRepository.push(student);
 
     const enrollmentRequest = {
@@ -45,7 +48,7 @@ describe('EnrollStudent', () => {
     }
 
     expect(() => {
-      enrollStudent.execute(enrollmentRequest);
+      factoryEnrollStudent(studentRepository).execute(enrollmentRequest);
     }).toThrow(new ValidationError("Enrollment with duplicated student is not allowed"));
   })
 })

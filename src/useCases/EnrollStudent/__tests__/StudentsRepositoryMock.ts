@@ -1,8 +1,10 @@
 import Student from "../../../entities/Student";
 import Repository from "../../../repositories/Repository";
 
-export class StudentsRepositoryMock implements Repository {
-  constructor(private data: Student[] = []) {}
+export class StudentsRepositoryMock extends Repository {
+  constructor(private data: Student[] = []) {
+    super(data);
+  }
 
   find(student: Student): Student | undefined {
     return this.data.find(studentOnDatabase => JSON.stringify(student) === JSON.stringify(studentOnDatabase));
