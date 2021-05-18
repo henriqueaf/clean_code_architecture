@@ -1,11 +1,11 @@
 import Repository from '../../../repositories/Repository';
 import EnrollStudent from '../EnrollStudent';
 import { ValidationError } from '../Errors';
-import { StudentsRepositoryMock } from './StudentsRepositoryMock';
+import { StudentsRepository } from '../../../repositories/StudentsRepository';
 
 describe('EnrollStudent', () => {
-  const factoryEnrollStudent = (studentRepository: Repository = new StudentsRepositoryMock()): EnrollStudent => {
-    return new EnrollStudent(studentRepository);
+  const factoryEnrollStudent = (studentsRepository: Repository = new StudentsRepository()): EnrollStudent => {
+    return new EnrollStudent(studentsRepository);
   }
 
   test("Should not enroll without valid student name", () => {
@@ -40,15 +40,15 @@ describe('EnrollStudent', () => {
       cpf: "832.081.519-34"
     }
 
-    const studentRepository = new StudentsRepositoryMock();
-    studentRepository.push(student);
+    const studentsRepository = new StudentsRepository();
+    studentsRepository.push(student);
 
     const enrollmentRequest = {
       student: student
     }
 
     expect(() => {
-      factoryEnrollStudent(studentRepository).execute(enrollmentRequest);
+      factoryEnrollStudent(studentsRepository).execute(enrollmentRequest);
     }).toThrow(new ValidationError("Enrollment with duplicated student is not allowed"));
   })
 })
