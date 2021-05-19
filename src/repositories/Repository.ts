@@ -1,6 +1,6 @@
 export default abstract class Repository {
-  abstract data: Object[];
+  abstract data: unknown[];
 
-  abstract find(element: Object): Object | undefined;
-  abstract push(element: any): void;
+  abstract find(element: unknown): unknown | undefined;
+  abstract push(element: unknown): void;
 }

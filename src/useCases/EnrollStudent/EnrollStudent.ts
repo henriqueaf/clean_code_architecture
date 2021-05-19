@@ -7,7 +7,7 @@ import Student from '../../entities/Student';
 export default class EnrollStudent {
   constructor(private studentRepository: Repository) {}
 
-  execute(enrollmentRequest: EnrollmentRequest) {
+  execute(enrollmentRequest: EnrollmentRequest): void {
     const { student } = enrollmentRequest;
 
     this.validateName(student.name);
@@ -19,19 +19,19 @@ export default class EnrollStudent {
     const validNameRegex = /^([A-Za-z]+ )+([A-Za-z])+$/;
 
     if (!validNameRegex.test(name)) {
-      throw new ValidationError("Invalid student name");
+      throw new ValidationError('Invalid student name');
     }
   }
 
   private validateCpf(cpf: string) {
     if(!isCpfValid(cpf)) {
-      throw new ValidationError("Invalid student cpf");
+      throw new ValidationError('Invalid student cpf');
     }
   }
 
   private validateExistingStudent(student: Student) {
     if(this.studentRepository.find(student)) {
-      throw new ValidationError("Enrollment with duplicated student is not allowed");
+      throw new ValidationError('Enrollment with duplicated student is not allowed');
     }
   }
 }

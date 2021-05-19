@@ -1,5 +1,5 @@
-import Student from "../entities/Student";
-import Repository from "./Repository";
+import Student from '../entities/Student';
+import Repository from './Repository';
 
 export class StudentsRepository extends Repository {
   data: Student[] = [];
