@@ -8,19 +8,17 @@ export default class EnrollStudent {
   constructor(private studentRepository: Repository) {}
 
   execute(enrollmentRequest: EnrollmentRequest) {
-    const {student: { name, cpf }} = enrollmentRequest;
-    const student = { name, cpf }
+    const { student } = enrollmentRequest;
 
-    this.validateName(name);
-    this.validateCpf(cpf);
-
+    this.validateName(student.name);
+    this.validateCpf(student.cpf);
     this.validateExistingStudent(student);
   }
 
   private validateName(name: string) {
-    const regex = /^([A-Za-z]+ )+([A-Za-z])+$/;
+    const validNameRegex = /^([A-Za-z]+ )+([A-Za-z])+$/;
 
-    if (!regex.test(name)) {
+    if (!validNameRegex.test(name)) {
       throw new ValidationError("Invalid student name");
     }
   }
