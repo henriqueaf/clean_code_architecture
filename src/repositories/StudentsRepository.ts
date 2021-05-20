@@ -1,10 +1,10 @@
-import Student from '../entities/Student';
+import IStudent from '../entities/IStudent';
 import Repository from './Repository';
 
-export class StudentsRepository extends Repository<Student> {
-  protected data: Student[] = [];
+export class StudentsRepository extends Repository<IStudent> {
+  protected data: IStudent[] = [];
 
-  find(student: Student): Student | undefined {
+  find(student: IStudent): IStudent | undefined {
     const nonDigitsRegex = /\D/g;
 
     return this.data.find(studentOnDatabase => {
@@ -12,7 +12,7 @@ export class StudentsRepository extends Repository<Student> {
     });
   }
 
-  push(student: Student): void {
+  push(student: IStudent): void {
     this.data.push(student);
   }
 }

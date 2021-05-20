@@ -1,13 +1,13 @@
 import { ValidationError } from './Errors';
-import { EnrollmentRequest } from './Interfaces';
+import { IEnrollmentRequest } from './Interfaces';
 import isCpfValid from '../../utils/IsCpfValid';
 import Repository from '../../repositories/Repository';
-import Student from '../../entities/Student';
+import Student from '../../entities/IStudent';
 
 export default class EnrollStudent {
   constructor(private studentRepository: Repository<Student>) {}
 
-  execute(enrollmentRequest: EnrollmentRequest): void {
+  execute(enrollmentRequest: IEnrollmentRequest): void {
     const { student } = enrollmentRequest;
 
     this.validateName(student.name);
