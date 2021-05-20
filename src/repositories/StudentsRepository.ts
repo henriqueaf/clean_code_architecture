@@ -5,7 +5,11 @@ export class StudentsRepository extends Repository<Student> {
   data: Student[] = [];
 
   find(student: Student): Student | undefined {
-    return this.data.find(studentOnDatabase => JSON.stringify(student) === JSON.stringify(studentOnDatabase));
+    const nonDigitsRegex = /\D/g;
+
+    return this.data.find(studentOnDatabase => {
+      return student.cpf.replace(nonDigitsRegex, '') === studentOnDatabase.cpf.replace(nonDigitsRegex, '');
+    });
   }
 
   push(student: Student): void {
