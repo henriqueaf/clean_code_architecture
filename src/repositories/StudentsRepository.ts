@@ -12,7 +12,7 @@ export class StudentsRepository extends Repository<IStudent> {
     });
   }
 
-  push(student: IStudent): void {
+  save(student: IStudent): void {
     this.data.push(student);
   }
 }

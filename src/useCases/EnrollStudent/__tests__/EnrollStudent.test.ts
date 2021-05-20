@@ -40,7 +40,7 @@ describe('EnrollStudent', () => {
     };
 
     const studentsRepository = new StudentsRepository();
-    studentsRepository.push(student);
+    studentsRepository.save(student);
 
     const enrollmentRequest = {
       student: student
