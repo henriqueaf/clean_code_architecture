@@ -11,20 +11,20 @@ export default (cpf = ''): boolean => {
   const digit2 = calculateDigit(cpf, FACTOR_DIGIT_2, MAX_DIGITS_2);
   const calculatedCheckDigit = `${digit1}${digit2}`;
   return getCheckDigit(cpf) == calculatedCheckDigit;
-}
+};
 
 const extractDigits = (cpf: string) => {
   return cpf.replace(/\D/g, '');
-}
+};
 
 const isInvalidLength = (cpf: string) => {
   return cpf.length !== 11;
-}
+};
 
 const isBlocked = (cpf: string) => {
   const [digit1] = cpf;
   return cpf.split('').every(digit => digit === digit1);
-}
+};
 
 const calculateDigit = (cpf: string, factor: number, max: number) => {
   let total = 0;
@@ -32,12 +32,12 @@ const calculateDigit = (cpf: string, factor: number, max: number) => {
     total += digit * factor--;
   }
   return (total%11 < 2) ? 0 : (11 - total%11);
-}
+};
 
 const toDigitArray = (cpf: string) => {
   return [...cpf].map(digit => parseInt(digit));
-}
+};
 
 const getCheckDigit = (cpf: string) => {
   return cpf.slice(9);
-}
+};
