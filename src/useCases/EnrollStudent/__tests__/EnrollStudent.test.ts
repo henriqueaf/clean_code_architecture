@@ -1,10 +1,9 @@
-import Repository from '../../../repositories/Repository';
 import EnrollStudent from '../EnrollStudent';
 import { ValidationError } from '../Errors';
 import { StudentsRepository } from '../../../repositories/StudentsRepository';
 
 describe('EnrollStudent', () => {
-  const factoryEnrollStudent = (studentsRepository: Repository = new StudentsRepository()): EnrollStudent => {
+  const factoryEnrollStudent = (studentsRepository = new StudentsRepository()): EnrollStudent => {
     return new EnrollStudent(studentsRepository);
   };
 

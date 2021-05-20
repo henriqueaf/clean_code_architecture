@@ -1,7 +1,7 @@
 import Student from '../entities/Student';
 import Repository from './Repository';
 
-export class StudentsRepository extends Repository {
+export class StudentsRepository extends Repository<Student> {
   data: Student[] = [];
 
   find(student: Student): Student | undefined {

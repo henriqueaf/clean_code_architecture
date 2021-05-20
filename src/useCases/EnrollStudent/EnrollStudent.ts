@@ -5,7 +5,7 @@ import Repository from '../../repositories/Repository';
 import Student from '../../entities/Student';
 
 export default class EnrollStudent {
-  constructor(private studentRepository: Repository) {}
+  constructor(private studentRepository: Repository<Student>) {}
 
   execute(enrollmentRequest: EnrollmentRequest): void {
     const { student } = enrollmentRequest;
