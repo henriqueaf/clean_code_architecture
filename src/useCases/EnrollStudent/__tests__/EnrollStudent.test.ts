@@ -6,7 +6,7 @@ import { StudentsRepository } from '../../../repositories/StudentsRepository';
 describe('EnrollStudent', () => {
   const factoryEnrollStudent = (studentsRepository: Repository = new StudentsRepository()): EnrollStudent => {
     return new EnrollStudent(studentsRepository);
-  }
+  };
 
   test('Should not enroll without valid student name', () => {
     const enrollmentRequest = {
@@ -14,7 +14,7 @@ describe('EnrollStudent', () => {
         name: 'Ana',
         cpf: ''
       }
-    }
+    };
 
     expect(() => {
       factoryEnrollStudent().execute(enrollmentRequest);
@@ -27,7 +27,7 @@ describe('EnrollStudent', () => {
         name: 'Ana Silva',
         cpf: '123.456.789-99'
       }
-    }
+    };
 
     expect(() => {
       factoryEnrollStudent().execute(enrollmentRequest);
@@ -38,17 +38,17 @@ describe('EnrollStudent', () => {
     const student = {
       name: 'Ana Silva',
       cpf: '832.081.519-34'
-    }
+    };
 
     const studentsRepository = new StudentsRepository();
     studentsRepository.push(student);
 
     const enrollmentRequest = {
       student: student
-    }
+    };
 
     expect(() => {
       factoryEnrollStudent(studentsRepository).execute(enrollmentRequest);
     }).toThrow(new ValidationError('Enrollment with duplicated student is not allowed'));
-  })
-})
+  });
+});
