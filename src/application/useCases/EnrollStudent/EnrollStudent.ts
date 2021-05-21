@@ -1,18 +1,17 @@
 import { ValidationError } from './Errors';
 import { IEnrollmentRequest } from './Interfaces';
-import isCpfValid from '../../utils/IsCpfValid';
-import Repository from '../../repositories/Repository';
-import Student from '../../entities/IStudent';
+import isCpfValid from '../../../utils/IsCpfValid';
+import { IStudentsRepository } from '../../../domain/repositoriesInterfaces/IStudentsRepository';
 
 export default class EnrollStudent {
-  constructor(private studentRepository: Repository<Student>) {}
+  constructor(private studentRepository: IStudentsRepository) {}
 
   execute(enrollmentRequest: IEnrollmentRequest): void {
     const { student } = enrollmentRequest;
 
     this.validateName(student.name);
     this.validateCpf(student.cpf);
-    this.validateExistingStudent(student);
+    this.validateExistingStudent(student.cpf);
   }
 
   private validateName(name: string) {
@@ -29,8 +28,8 @@ export default class EnrollStudent {
     }
   }
 
-  private validateExistingStudent(student: Student) {
-    if(this.studentRepository.find(student)) {
+  private validateExistingStudent(cpf: string) {
+    if(this.studentRepository.findByCpf(cpf)) {
       throw new ValidationError('Enrollment with duplicated student is not allowed');
     }
   }

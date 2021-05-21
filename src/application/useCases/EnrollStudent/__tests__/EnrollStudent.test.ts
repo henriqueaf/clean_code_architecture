@@ -1,6 +1,6 @@
 import EnrollStudent from '../EnrollStudent';
 import { ValidationError } from '../Errors';
-import { StudentsRepository } from '../../../repositories/StudentsRepository';
+import { StudentsRepository } from '../../../../infrastructure/repositories/inMemory/StudentsRepository';
 
 describe('EnrollStudent', () => {
   const factoryEnrollStudent = (studentsRepository = new StudentsRepository()): EnrollStudent => {
