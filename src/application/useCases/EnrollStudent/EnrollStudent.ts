@@ -1,6 +1,6 @@
 import { ValidationError } from './Errors';
 import { IEnrollmentRequest } from './Interfaces';
-import isCpfValid from '../../../utils/IsCpfValid';
+import validateCpf from '../../../utils/ValidateCpf';
 import { IStudentsRepository } from '../../../domain/repositoriesInterfaces/IStudentsRepository';
 
 export default class EnrollStudent {
@@ -10,7 +10,7 @@ export default class EnrollStudent {
     const { student } = enrollmentRequest;
 
     this.validateName(student.name);
-    this.validateCpf(student.cpf);
+    this.isCpfValid(student.cpf);
     this.validateExistingStudent(student.cpf);
   }
 
@@ -22,8 +22,8 @@ export default class EnrollStudent {
     }
   }
 
-  private validateCpf(cpf: string) {
-    if(!isCpfValid(cpf)) {
+  private isCpfValid(cpf: string) {
+    if(!validateCpf(cpf)) {
       throw new ValidationError('Invalid student cpf');
     }
   }
