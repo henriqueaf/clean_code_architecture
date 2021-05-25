@@ -1,6 +1,6 @@
-import IStudent from '../entities/IStudent';
+import Student from '../entities/Student';
 
 export interface IStudentsRepository {
-  findByCpf(cpf: string): IStudent | undefined;
-  save(student: IStudent): void;
+  findByCpf(cpf: string): Student | undefined;
+  save(student: Student): void;
 }

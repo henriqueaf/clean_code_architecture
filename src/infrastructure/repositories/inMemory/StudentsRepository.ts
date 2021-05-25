@@ -1,11 +1,11 @@
-import IStudent from '../../../domain/entities/IStudent';
+import Student from '../../../domain/entities/Student';
 import { IStudentsRepository } from '../../../domain/repositoriesInterfaces/IStudentsRepository';
 import InMemoryRepository from './InMemoryRepository';
 
-export class StudentsRepository extends InMemoryRepository<IStudent> implements IStudentsRepository {
-  protected data: IStudent[] = [];
+export class StudentsRepository extends InMemoryRepository<Student> implements IStudentsRepository {
+  protected data: Student[] = [];
 
-  findByCpf(cpf: string): IStudent | undefined {
+  findByCpf(cpf: string): Student | undefined {
     const nonDigitsRegex = /\D/g;
 
     return this.data.find(student => {
@@ -13,7 +13,7 @@ export class StudentsRepository extends InMemoryRepository<IStudent> implements 
     });
   }
 
-  save(student: IStudent): void {
+  save(student: Student): void {
     this.data.push(student);
   }
 }
