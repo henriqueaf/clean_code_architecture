@@ -1,7 +1,9 @@
 import EnrollStudent from '../EnrollStudent';
-import { ValidationError } from '../Errors';
 import { StudentsRepository } from '../../../../infrastructure/repositories/inMemory/StudentsRepository';
 import Student from '../../../../domain/entities/Student';
+import { InvalidNameError } from '../../../../domain/valueObjects/Name';
+import { InvalidCpfError } from '../../../../domain/valueObjects/Cpf';
+import { ValidationError } from '../Errors';
 
 describe('EnrollStudent', () => {
   const factoryStudent = (name = 'Ana Silva', cpf = '01234567890'): Student => {
@@ -22,7 +24,7 @@ describe('EnrollStudent', () => {
 
     expect(() => {
       factoryEnrollStudent().execute(enrollmentRequest);
-    }).toThrow(new ValidationError('Invalid name'));
+    }).toThrowError(InvalidNameError);
   });
 
   test('Should not enroll without valid student cpf', () => {
@@ -35,7 +37,7 @@ describe('EnrollStudent', () => {
 
     expect(() => {
       factoryEnrollStudent().execute(enrollmentRequest);
-    }).toThrow(new ValidationError('Invalid cpf'));
+    }).toThrowError(InvalidCpfError);
   });
 
   test('Should not enroll duplicated student', () => {
@@ -52,6 +54,6 @@ describe('EnrollStudent', () => {
 
     expect(() => {
       factoryEnrollStudent(studentsRepository).execute(enrollmentRequest);
-    }).toThrow(new ValidationError('Enrollment with duplicated student is not allowed'));
+    }).toThrowError(new ValidationError('Enrollment with duplicated student is not allowed'));
   });
 });

@@ -4,7 +4,7 @@ describe('Cpf', () => {
   test('Should throw an error with an invalid Cpf', () => {
     const invalidCpf = '000.000.000-00';
 
-    expect(() => new Cpf(invalidCpf)).toThrow(new InvalidCpfError());
+    expect(() => new Cpf(invalidCpf)).toThrowError(InvalidCpfError);
   });
 
   test('Should assign value if a valid Cpf is provided', () => {

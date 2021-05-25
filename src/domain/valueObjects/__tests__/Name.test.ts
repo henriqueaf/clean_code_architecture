@@ -4,7 +4,7 @@ describe('Name', () => {
   test('Should throw an error with an invalid Name', () => {
     const invalidname = 'Ana';
 
-    expect(() => new Name(invalidname)).toThrow(new InvalidNameError());
+    expect(() => new Name(invalidname)).toThrowError(InvalidNameError);
   });
 
   test('Should assign value if a valid Name is provided', () => {
