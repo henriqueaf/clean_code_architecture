@@ -13,17 +13,8 @@ export default class EnrollStudent {
       }
     } = enrollmentRequest;
 
-    this.validateName(name);
     const student = new Student(name, cpf);
     this.validateExistingStudent(student);
-  }
-
-  private validateName(name: string) {
-    const validNameRegex = /^([A-Za-z]+ )+([A-Za-z])+$/;
-
-    if (!validNameRegex.test(name)) {
-      throw new ValidationError('Invalid student name');
-    }
   }
 
   private validateExistingStudent(student: Student) {

@@ -22,7 +22,7 @@ describe('EnrollStudent', () => {
 
     expect(() => {
       factoryEnrollStudent().execute(enrollmentRequest);
-    }).toThrow(new ValidationError('Invalid student name'));
+    }).toThrow(new ValidationError('Invalid name'));
   });
 
   test('Should not enroll without valid student cpf', () => {
