@@ -11,12 +11,13 @@ export default class EnrollStudent {
   execute(enrollmentRequest: IEnrollmentRequest): string {
     const {
       student: {
-        name, cpf
+        name, cpf, birthDate
       }
     } = enrollmentRequest;
 
-    const student = new Student(name, cpf);
+    const student = new Student(name, cpf, birthDate);
     this.validateExistingStudent(student);
+    this.validateStudentMinimumAge(student);
 
     this.studentRepository.save(student);
     return this.generateEnrollmentCode(enrollmentRequest);
@@ -25,6 +26,12 @@ export default class EnrollStudent {
   private validateExistingStudent(student: Student) {
     if(this.studentRepository.findByCpf(student.cpf.value)) {
       throw new ValidationError('Enrollment with duplicated student is not allowed');
+    }
+  }
+
+  private validateStudentMinimumAge(student: Student) {
+    if(student.age() < 18) {
+      throw new ValidationError('Student below minimum age');
     }
   }
 

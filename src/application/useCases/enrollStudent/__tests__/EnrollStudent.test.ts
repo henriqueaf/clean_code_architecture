@@ -17,8 +17,12 @@ describe('EnrollStudent', () => {
     class: 'A'
   };
 
-  const factoryStudent = (name = 'Ana Silva', cpf = '01234567890'): Student => {
-    return new Student(name, cpf);
+  const factoryStudent = (
+    name = validEnrollmentRequest.student.name,
+    cpf = validEnrollmentRequest.student.cpf,
+    birthDate = validEnrollmentRequest.student.birthDate
+  ): Student => {
+    return new Student(name, cpf, birthDate);
   };
 
   const factoryEnrollStudent = (studentsRepository = new StudentsRepository()): EnrollStudent => {
@@ -93,5 +97,22 @@ describe('EnrollStudent', () => {
     };
 
     expect(factoryEnrollStudent().execute(enrollmentRequest)).toEqual('2021EM1A0001');
+  });
+
+  test('Should not enroll student below minimum age', () => {
+    const studentsRepository = new StudentsRepository();
+    const currentDateString = new Date().toISOString().slice(0,10);
+
+    const enrollmentRequest = Object.assign({}, validEnrollmentRequest, {
+      student: {
+        ...validEnrollmentRequest.student,
+        birthDate: currentDateString
+      }
+    });
+
+    expect(() => {
+      factoryEnrollStudent(studentsRepository).execute(enrollmentRequest);
+    }).toThrowError(new ValidationError('Student below minimum age'));
+    expect(studentsRepository.count()).toBe(0);
   });
 });
