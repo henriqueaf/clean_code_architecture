@@ -1,5 +1,11 @@
 import Cpf from '../valueObjects/Cpf';
 
 export default class Student {
-  constructor(public name: string, public cpf: Cpf){}
+  name: string;
+  cpf: Cpf;
+
+  constructor(name: string, cpf: string){
+    this.name = name;
+    this.cpf = new Cpf(cpf);
+  }
 }

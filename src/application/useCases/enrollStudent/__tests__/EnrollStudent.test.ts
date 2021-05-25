@@ -2,10 +2,9 @@ import EnrollStudent from '../EnrollStudent';
 import { ValidationError } from '../Errors';
 import { StudentsRepository } from '../../../../infrastructure/repositories/inMemory/StudentsRepository';
 import Student from '../../../../domain/entities/Student';
-import Cpf from '../../../../domain/valueObjects/Cpf';
 
 describe('EnrollStudent', () => {
-  const factoryStudent = (name = 'Ana Silva', cpf: Cpf = new Cpf('01234567890')): Student => {
+  const factoryStudent = (name = 'Ana Silva', cpf = '01234567890'): Student => {
     return new Student(name, cpf);
   };
 
@@ -36,7 +35,7 @@ describe('EnrollStudent', () => {
 
     expect(() => {
       factoryEnrollStudent().execute(enrollmentRequest);
-    }).toThrow(new ValidationError('Invalid student cpf'));
+    }).toThrow(new ValidationError('Invalid cpf'));
   });
 
   test('Should not enroll duplicated student', () => {
