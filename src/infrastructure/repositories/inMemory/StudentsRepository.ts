@@ -13,7 +13,13 @@ export class StudentsRepository extends InMemoryRepository<Student> implements I
     });
   }
 
-  save(student: Student): void {
-    this.data.push(student);
+  save(student: Student): boolean {
+    const previousCount = this.count();
+
+    return this.data.push(student) > previousCount;
+  }
+
+  count(): number {
+    return this.data.length;
   }
 }
