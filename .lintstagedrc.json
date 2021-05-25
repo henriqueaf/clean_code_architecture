@@ -1,7 +1,6 @@
 {
   "*.ts": [
     "tsc --noEmit --downlevelIteration",
-    "eslint --fix",
-    "jest --bail --findRelatedTests"
+    "eslint --fix"
   ]
 }
