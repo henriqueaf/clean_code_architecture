@@ -9,7 +9,7 @@ export class StudentsRepository extends InMemoryRepository<Student> implements I
     const nonDigitsRegex = /\D/g;
 
     return this.data.find(student => {
-      return cpf.replace(nonDigitsRegex, '') === student.cpf.replace(nonDigitsRegex, '');
+      return cpf.replace(nonDigitsRegex, '') === student.cpf.value.replace(nonDigitsRegex, '');
     });
   }
 
