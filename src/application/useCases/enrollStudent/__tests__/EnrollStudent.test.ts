@@ -6,6 +6,17 @@ import { InvalidCpfError } from '../../../../domain/valueObjects/Cpf';
 import { ValidationError } from '../Errors';
 
 describe('EnrollStudent', () => {
+  const validEnrollmentRequest = {
+    student: {
+      name: 'Ana Maria',
+      cpf: '755.525.774-26',
+      birthDate: '2002-03-12'
+    },
+    level: 'EM',
+    module: '1',
+    class: 'A'
+  };
+
   const factoryStudent = (name = 'Ana Silva', cpf = '01234567890'): Student => {
     return new Student(name, cpf);
   };
@@ -15,12 +26,12 @@ describe('EnrollStudent', () => {
   };
 
   test('Should not enroll without valid student name', () => {
-    const enrollmentRequest = {
+    const enrollmentRequest = Object.assign({}, validEnrollmentRequest, {
       student: {
-        name: 'Ana',
-        cpf: ''
+        ...validEnrollmentRequest.student,
+        name: 'Ana'
       }
-    };
+    });
 
     expect(() => {
       factoryEnrollStudent().execute(enrollmentRequest);
@@ -28,12 +39,12 @@ describe('EnrollStudent', () => {
   });
 
   test('Should not enroll without valid student cpf', () => {
-    const enrollmentRequest = {
+    const enrollmentRequest = Object.assign({}, validEnrollmentRequest, {
       student: {
-        name: 'Ana Silva',
+        ...validEnrollmentRequest.student,
         cpf: '123.456.789-99'
       }
-    };
+    });
 
     expect(() => {
       factoryEnrollStudent().execute(enrollmentRequest);
@@ -45,12 +56,13 @@ describe('EnrollStudent', () => {
     const studentsRepository = new StudentsRepository();
     studentsRepository.save(student);
 
-    const enrollmentRequest = {
+    const enrollmentRequest = Object.assign({}, validEnrollmentRequest, {
       student: {
+        ...validEnrollmentRequest.student,
         name: student.name.value,
         cpf: student.cpf.value
       }
-    };
+    });
 
     expect(() => {
       factoryEnrollStudent(studentsRepository).execute(enrollmentRequest);
