@@ -45,7 +45,7 @@ describe('EnrollStudent', () => {
 
     const enrollmentRequest = {
       student: {
-        name: student.name,
+        name: student.name.value,
         cpf: student.cpf.value
       }
     };
