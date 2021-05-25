@@ -68,4 +68,30 @@ describe('EnrollStudent', () => {
       factoryEnrollStudent(studentsRepository).execute(enrollmentRequest);
     }).toThrowError(new ValidationError('Enrollment with duplicated student is not allowed'));
   });
+
+  test('Should save student on repository', () => {
+    const enrollmentRequest = validEnrollmentRequest;
+    const studentsRepository = new StudentsRepository();
+
+    expect(studentsRepository.count()).toBe(0);
+
+    factoryEnrollStudent(studentsRepository).execute(enrollmentRequest);
+
+    expect(studentsRepository.count()).toBe(1);
+  });
+
+  test('Should generate enrollment code', () => {
+    const enrollmentRequest = {
+      student: {
+        name: 'Maria Carolina Fonseca',
+        cpf: '755.525.774-26',
+        birthDate: '2002-03-12'
+      },
+      level: 'EM',
+      module: '1',
+      class: 'A'
+    };
+
+    expect(factoryEnrollStudent().execute(enrollmentRequest)).toEqual('2021EM1A0001');
+  });
 });
