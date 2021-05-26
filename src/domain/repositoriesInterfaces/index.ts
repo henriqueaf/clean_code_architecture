@@ -1,11 +1,11 @@
 import { IStudentsRepository } from './IStudentsRepository';
-import { IModuleRepository } from './IModuleRepository';
-import { IClassRepository } from './IClassRepository';
-import { ILevelRepository } from './ILevelRepository';
+import { IModulesRepository } from './IModulesRepository';
+import { IClassesRepository } from './IClassesRepository';
+import { ILevelsRepository } from './ILevelsRepository';
 
 export {
   IStudentsRepository,
-  IModuleRepository,
-  IClassRepository,
-  ILevelRepository
+  IModulesRepository,
+  IClassesRepository,
+  ILevelsRepository
 };
