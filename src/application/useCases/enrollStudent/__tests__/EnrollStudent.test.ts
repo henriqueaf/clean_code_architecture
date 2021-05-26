@@ -1,9 +1,11 @@
 import EnrollStudent from '../EnrollStudent';
 import { StudentsRepository } from '../../../../infrastructure/repositories/inMemory/StudentsRepository';
+import { ModulesRepository } from '../../../../infrastructure/repositories/inMemory/ModulesRepository';
 import Student from '../../../../domain/entities/Student';
 import { InvalidNameError } from '../../../../domain/valueObjects/Name';
 import { InvalidCpfError } from '../../../../domain/valueObjects/Cpf';
 import { ValidationError } from '../Errors';
+import { yearsAgo } from '../../../../utils/DateUtils';
 
 describe('EnrollStudent', () => {
   const validEnrollmentRequest = {
@@ -25,8 +27,17 @@ describe('EnrollStudent', () => {
     return new Student(name, cpf, birthDate);
   };
 
-  const factoryEnrollStudent = (studentsRepository = new StudentsRepository()): EnrollStudent => {
-    return new EnrollStudent(studentsRepository);
+  const factoryEnrollStudent = ({
+    studentsRepository,
+    modulesRepository
+  }: {
+    studentsRepository?: StudentsRepository,
+    modulesRepository?: ModulesRepository
+  } = {}): EnrollStudent => {
+    studentsRepository = studentsRepository || new StudentsRepository();
+    modulesRepository = modulesRepository || new ModulesRepository();
+
+    return new EnrollStudent(studentsRepository, modulesRepository);
   };
 
   test('Should not enroll without valid student name', () => {
@@ -69,7 +80,7 @@ describe('EnrollStudent', () => {
     });
 
     expect(() => {
-      factoryEnrollStudent(studentsRepository).execute(enrollmentRequest);
+      factoryEnrollStudent({ studentsRepository }).execute(enrollmentRequest);
     }).toThrowError(new ValidationError('Enrollment with duplicated student is not allowed'));
   });
 
@@ -79,7 +90,7 @@ describe('EnrollStudent', () => {
 
     expect(studentsRepository.count()).toBe(0);
 
-    factoryEnrollStudent(studentsRepository).execute(enrollmentRequest);
+    factoryEnrollStudent({ studentsRepository }).execute(enrollmentRequest);
 
     expect(studentsRepository.count()).toBe(1);
   });
@@ -100,19 +111,28 @@ describe('EnrollStudent', () => {
   });
 
   test('Should not enroll student below minimum age', () => {
-    const studentsRepository = new StudentsRepository();
-    const currentDateString = new Date().toISOString().slice(0,10);
+    const modulesRepository = new ModulesRepository();
+    const moduleCode = '1';
+    const nineYearsAgoDate = yearsAgo(9);
 
     const enrollmentRequest = Object.assign({}, validEnrollmentRequest, {
       student: {
         ...validEnrollmentRequest.student,
-        birthDate: currentDateString
-      }
+        birthDate: nineYearsAgoDate
+      },
+      module: moduleCode
+    });
+
+    modulesRepository.save({
+      level: 'EF1',
+      code: moduleCode,
+      description: '1o Ano',
+      minimumAge: 15,
+      price: 1500
     });
 
     expect(() => {
-      factoryEnrollStudent(studentsRepository).execute(enrollmentRequest);
+      factoryEnrollStudent({ modulesRepository }).execute(enrollmentRequest);
     }).toThrowError(new ValidationError('Student below minimum age'));
-    expect(studentsRepository.count()).toBe(0);
   });
 });
