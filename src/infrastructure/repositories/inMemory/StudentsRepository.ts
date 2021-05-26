@@ -12,4 +12,8 @@ export class StudentsRepository extends InMemoryRepository<Student> implements I
       return cpf.replace(nonDigitsRegex, '') === student.cpf.value.replace(nonDigitsRegex, '');
     });
   }
+
+  allByClassCode(classCode: string): Student[] {
+    return this.data.filter(student => student.classCode == classCode);
+  }
 }

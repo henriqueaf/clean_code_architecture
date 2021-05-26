@@ -5,11 +5,12 @@ describe('Student', () => {
   const validStudentAttributes = {
     name: 'Ana Maria',
     cpf: '755.525.774-26',
-    birthDate: '2002-03-12'
+    birthDate: '2002-03-12',
+    classCode: 'A'
   };
 
   const factoryStudent = (params = validStudentAttributes): Student => {
-    return new Student(params.name, params.cpf, params.birthDate);
+    return new Student(params.name, params.cpf, params.birthDate, params.classCode);
   };
 
   describe('age()', () => {

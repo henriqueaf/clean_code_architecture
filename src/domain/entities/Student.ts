@@ -6,11 +6,13 @@ export default class Student {
   name: Name;
   cpf: Cpf;
   birthDate: Date;
+  classCode: string;
 
-  constructor(name: string, cpf: string, birthDate: string){
+  constructor(name: string, cpf: string, birthDate: string, classCode: string){
     this.name = new Name(name);
     this.cpf = new Cpf(cpf);
     this.birthDate = new Date(birthDate);
+    this.classCode = classCode;
   }
 
   public age(): number {
