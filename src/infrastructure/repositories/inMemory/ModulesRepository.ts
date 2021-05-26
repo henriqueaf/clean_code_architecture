@@ -1,8 +1,8 @@
 import Module from '../../../domain/entities/Module';
-import { IModuleRepository } from '../../../domain/repositoriesInterfaces';
+import { IModulesRepository } from '../../../domain/repositoriesInterfaces';
 import InMemoryRepository from './InMemoryRepository';
 
-export class ModulesRepository extends InMemoryRepository<Module> implements IModuleRepository {
+export class ModulesRepository extends InMemoryRepository<Module> implements IModulesRepository {
   protected data: Module[] = [];
 
   findByCode(code: string): Module | undefined {

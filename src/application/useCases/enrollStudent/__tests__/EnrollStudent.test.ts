@@ -1,6 +1,7 @@
 import EnrollStudent from '../EnrollStudent';
 import { StudentsRepository } from '../../../../infrastructure/repositories/inMemory/StudentsRepository';
 import { ModulesRepository } from '../../../../infrastructure/repositories/inMemory/ModulesRepository';
+import { ClassesRepository } from '../../../../infrastructure/repositories/inMemory/ClassesRepository';
 import Student from '../../../../domain/entities/Student';
 import { InvalidNameError } from '../../../../domain/valueObjects/Name';
 import { InvalidCpfError } from '../../../../domain/valueObjects/Cpf';
@@ -22,22 +23,26 @@ describe('EnrollStudent', () => {
   const factoryStudent = (
     name = validEnrollmentRequest.student.name,
     cpf = validEnrollmentRequest.student.cpf,
-    birthDate = validEnrollmentRequest.student.birthDate
+    birthDate = validEnrollmentRequest.student.birthDate,
+    classCode = validEnrollmentRequest.class
   ): Student => {
-    return new Student(name, cpf, birthDate);
+    return new Student(name, cpf, birthDate, classCode);
   };
 
   const factoryEnrollStudent = ({
     studentsRepository,
-    modulesRepository
+    modulesRepository,
+    classesRepository
   }: {
     studentsRepository?: StudentsRepository,
-    modulesRepository?: ModulesRepository
+    modulesRepository?: ModulesRepository,
+    classesRepository?: ClassesRepository
   } = {}): EnrollStudent => {
     studentsRepository = studentsRepository || new StudentsRepository();
     modulesRepository = modulesRepository || new ModulesRepository();
+    classesRepository = classesRepository || new ClassesRepository();
 
-    return new EnrollStudent(studentsRepository, modulesRepository);
+    return new EnrollStudent(studentsRepository, modulesRepository, classesRepository);
   };
 
   test('Should not enroll without valid student name', () => {
@@ -68,8 +73,6 @@ describe('EnrollStudent', () => {
 
   test('Should not enroll duplicated student', () => {
     const student = factoryStudent();
-    const studentsRepository = new StudentsRepository();
-    studentsRepository.save(student);
 
     const enrollmentRequest = Object.assign({}, validEnrollmentRequest, {
       student: {
@@ -79,8 +82,11 @@ describe('EnrollStudent', () => {
       }
     });
 
+    const enrollStudent = factoryEnrollStudent();
+    enrollStudent.execute(enrollmentRequest);
+
     expect(() => {
-      factoryEnrollStudent({ studentsRepository }).execute(enrollmentRequest);
+      enrollStudent.execute(enrollmentRequest);
     }).toThrowError(new ValidationError('Enrollment with duplicated student is not allowed'));
   });
 
@@ -134,5 +140,39 @@ describe('EnrollStudent', () => {
     expect(() => {
       factoryEnrollStudent({ modulesRepository }).execute(enrollmentRequest);
     }).toThrowError(new ValidationError('Student below minimum age'));
+  });
+
+  test('Should not enroll student over class capacity', () => {
+    const classesRepository = new ClassesRepository();
+    const classCode = 'A';
+    const enrollStudent = factoryEnrollStudent({ classesRepository });
+
+    classesRepository.save({
+      level: 'EM',
+      module: '3',
+      code: classCode,
+      capacity: 1
+    });
+
+    let enrollmentRequest = Object.assign({}, validEnrollmentRequest, {
+      student: {
+        ...validEnrollmentRequest.student,
+        class: classCode
+      }
+    });
+
+    enrollStudent.execute(enrollmentRequest);
+
+    enrollmentRequest = Object.assign({}, enrollmentRequest, {
+      student: {
+        ...validEnrollmentRequest.student,
+        cpf: '01234567890',
+        class: classCode
+      }
+    });
+
+    expect(() => {
+      enrollStudent.execute(enrollmentRequest);
+    }).toThrowError(new ValidationError('Class is over capacity'));
   });
 });
