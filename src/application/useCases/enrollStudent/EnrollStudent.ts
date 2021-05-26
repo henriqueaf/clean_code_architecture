@@ -1,6 +1,6 @@
 import { ValidationError } from './Errors';
 import { IEnrollmentRequest } from './Interfaces';
-import { IStudentsRepository } from '../../../domain/repositoriesInterfaces/IStudentsRepository';
+import { IStudentsRepository, IModuleRepository } from '../../../domain/repositoriesInterfaces';
 import Student from '../../../domain/entities/Student';
 
 export const SEQUENCE_MAX_DIGITS = 4;
