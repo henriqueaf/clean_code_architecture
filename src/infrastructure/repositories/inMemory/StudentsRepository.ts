@@ -12,14 +12,4 @@ export class StudentsRepository extends InMemoryRepository<Student> implements I
       return cpf.replace(nonDigitsRegex, '') === student.cpf.value.replace(nonDigitsRegex, '');
     });
   }
-
-  save(student: Student): boolean {
-    const previousCount = this.count();
-
-    return this.data.push(student) > previousCount;
-  }
-
-  count(): number {
-    return this.data.length;
-  }
 }
