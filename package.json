@@ -6,8 +6,7 @@
   "scripts": {
     "tsc:init": "tsc --init",
     "build": "tsc",
-    "test": "tsc && jest ./dist",
-    "prepare": "husky install"
+    "test": "tsc && jest ./dist"
   },
   "author": "",
   "license": "ISC",

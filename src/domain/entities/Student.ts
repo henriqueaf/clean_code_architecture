@@ -1,4 +1,4 @@
-import { dateDiffInYears } from '../../utils/DateUtils';
+import { dateDiffInYears } from '@app/utils/DateUtils';
 import Cpf from '../valueObjects/Cpf';
 import Name from '../valueObjects/Name';
 import { InvalidStudentBirthdate, InvalidStudentClassCode } from './errors/StudentErrors';

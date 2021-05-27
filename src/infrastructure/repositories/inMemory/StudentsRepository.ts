@@ -1,5 +1,5 @@
-import Student from '../../../domain/entities/Student';
-import { IStudentsRepository } from '../../../domain/repositoriesInterfaces/IStudentsRepository';
+import Student from '@app/domain/entities/Student';
+import { IStudentsRepository } from '@app/domain/repositoriesInterfaces/IStudentsRepository';
 import InMemoryRepository from './InMemoryRepository';
 
 export class StudentsRepository extends InMemoryRepository<Student> implements IStudentsRepository {

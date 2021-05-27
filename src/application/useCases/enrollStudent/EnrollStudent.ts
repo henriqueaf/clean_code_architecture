@@ -1,7 +1,7 @@
 import { ValidationError } from './Errors';
 import { IEnrollmentRequest } from './Interfaces';
-import { IStudentsRepository, IModulesRepository, IClassesRepository } from '../../../domain/repositoriesInterfaces';
-import Student from '../../../domain/entities/Student';
+import { IStudentsRepository, IModulesRepository, IClassesRepository } from '@app/domain/repositoriesInterfaces';
+import Student from '@app/domain/entities/Student';
 
 export const SEQUENCE_MAX_DIGITS = 4;
 

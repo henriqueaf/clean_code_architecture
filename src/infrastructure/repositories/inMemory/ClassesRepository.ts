@@ -1,5 +1,5 @@
-import Class from '../../../domain/entities/Class';
-import { IClassesRepository } from '../../../domain/repositoriesInterfaces';
+import Class from '@app/domain/entities/Class';
+import { IClassesRepository } from '@app/domain/repositoriesInterfaces';
 import InMemoryRepository from './InMemoryRepository';
 
 export class ClassesRepository extends InMemoryRepository<Class> implements IClassesRepository {

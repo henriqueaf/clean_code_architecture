@@ -1,11 +1,11 @@
 import EnrollStudent from '../EnrollStudent';
-import { StudentsRepository } from '../../../../infrastructure/repositories/inMemory/StudentsRepository';
-import { ModulesRepository } from '../../../../infrastructure/repositories/inMemory/ModulesRepository';
-import { ClassesRepository } from '../../../../infrastructure/repositories/inMemory/ClassesRepository';
-import { InvalidNameError } from '../../../../domain/valueObjects/Name';
-import { InvalidCpfError } from '../../../../domain/valueObjects/Cpf';
+import { StudentsRepository } from '@app/infrastructure/repositories/inMemory/StudentsRepository';
+import { ModulesRepository } from '@app/infrastructure/repositories/inMemory/ModulesRepository';
+import { ClassesRepository } from '@app/infrastructure/repositories/inMemory/ClassesRepository';
+import { InvalidNameError } from '@app/domain/valueObjects/Name';
+import { InvalidCpfError } from '@app/domain/valueObjects/Cpf';
 import { ValidationError } from '../Errors';
-import { yearsAgo } from '../../../../utils/DateUtils';
+import { yearsAgo } from '@app/utils/DateUtils';
 
 describe('EnrollStudent', () => {
   const validEnrollmentRequest = {
