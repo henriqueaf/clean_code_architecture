@@ -19,6 +19,7 @@ export default class EnrollStudent {
         cpf,
         birthDate
       },
+      level,
       module,
       class: classCode
     } = enrollmentRequest;
@@ -26,8 +27,8 @@ export default class EnrollStudent {
     const student = new Student(name, cpf, birthDate, classCode);
     this.validateExistingStudent(student);
     this.validateStudentMinimumAge(student, module);
-    this.validateClassExist(classCode);
-    this.validateClassMaximumCapacity(classCode);
+    this.validateClassExist(level, module, classCode);
+    this.validateClassMaximumCapacity(level, module, classCode);
     this.studentsRepository.save(student);
 
     return this.generateEnrollmentCode(enrollmentRequest);
@@ -47,16 +48,16 @@ export default class EnrollStudent {
     }
   }
 
-  private validateClassExist(classCode: string) {
-    const klass = this.classesRepository.findByCode(classCode);
+  private validateClassExist(level: string, module: string, classCode: string) {
+    const klass = this.classesRepository.findByLevelModuleCode(level, module, classCode);
 
     if(!klass) {
       throw new ValidationError('Invalid Class code');
     }
   }
 
-  private validateClassMaximumCapacity(classCode: string) {
-    const klass = this.classesRepository.findByCode(classCode);
+  private validateClassMaximumCapacity(level: string, module: string, classCode: string) {
+    const klass = this.classesRepository.findByLevelModuleCode(level, module, classCode);
     const classStudentsCount = this.studentsRepository.allByClassCode(classCode).length;
 
     if(klass && classStudentsCount >= klass.capacity) {

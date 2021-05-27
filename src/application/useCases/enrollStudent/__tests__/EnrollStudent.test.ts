@@ -33,8 +33,8 @@ describe('EnrollStudent', () => {
     classesRepository = classesRepository || new ClassesRepository();
 
     classesRepository.save({
-      level: 'EM',
-      module: '3',
+      level: validEnrollmentRequest.level,
+      module: validEnrollmentRequest.module,
       code: validEnrollmentRequest.class,
       capacity: 1
     });
@@ -89,6 +89,7 @@ describe('EnrollStudent', () => {
   });
 
   test('Should generate enrollment code', () => {
+    const currentYear = new Date().getFullYear();
     const enrollmentRequest = {
       student: {
         name: 'Maria Carolina Fonseca',
@@ -100,7 +101,7 @@ describe('EnrollStudent', () => {
       class: 'A'
     };
 
-    expect(factoryEnrollStudent().execute(enrollmentRequest)).toEqual('2021EM1A0001');
+    expect(factoryEnrollStudent().execute(enrollmentRequest)).toEqual(`${currentYear}EM1A0001`);
   });
 
   test('Should not enroll student below minimum age', () => {

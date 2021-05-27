@@ -4,7 +4,6 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "tsc:init": "tsc --init",
     "build": "tsc",
     "test": "tsc && jest ./dist"
   },
