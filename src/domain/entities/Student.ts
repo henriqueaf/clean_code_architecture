@@ -1,6 +1,7 @@
 import { dateDiffInYears } from '../../utils/DateUtils';
 import Cpf from '../valueObjects/Cpf';
 import Name from '../valueObjects/Name';
+import { InvalidStudentBirthdate, InvalidStudentClassCode } from './errors/StudentErrors';
 
 export default class Student {
   name: Name;
@@ -13,11 +14,17 @@ export default class Student {
     this.cpf = new Cpf(cpf);
     this.birthDate = new Date(birthDate);
     this.classCode = classCode;
+
+    if(isNaN(this.birthDate.getTime())) {
+      throw new InvalidStudentBirthdate();
+    }
+
+    if(!this.classCode || this.classCode.length === 0) {
+      throw new InvalidStudentClassCode();
+    }
   }
 
   public age(): number {
-    const currentDate = new Date();
-
-    return dateDiffInYears(currentDate, this.birthDate);
+    return dateDiffInYears(new Date(), this.birthDate);
   }
 }
