@@ -2,7 +2,6 @@ import EnrollStudent from '../EnrollStudent';
 import { StudentsRepository } from '../../../../infrastructure/repositories/inMemory/StudentsRepository';
 import { ModulesRepository } from '../../../../infrastructure/repositories/inMemory/ModulesRepository';
 import { ClassesRepository } from '../../../../infrastructure/repositories/inMemory/ClassesRepository';
-import Student from '../../../../domain/entities/Student';
 import { InvalidNameError } from '../../../../domain/valueObjects/Name';
 import { InvalidCpfError } from '../../../../domain/valueObjects/Cpf';
 import { ValidationError } from '../Errors';
@@ -20,15 +19,6 @@ describe('EnrollStudent', () => {
     class: 'A'
   };
 
-  const factoryStudent = (
-    name = validEnrollmentRequest.student.name,
-    cpf = validEnrollmentRequest.student.cpf,
-    birthDate = validEnrollmentRequest.student.birthDate,
-    classCode = validEnrollmentRequest.class
-  ): Student => {
-    return new Student(name, cpf, birthDate, classCode);
-  };
-
   const factoryEnrollStudent = ({
     studentsRepository,
     modulesRepository,
@@ -41,6 +31,13 @@ describe('EnrollStudent', () => {
     studentsRepository = studentsRepository || new StudentsRepository();
     modulesRepository = modulesRepository || new ModulesRepository();
     classesRepository = classesRepository || new ClassesRepository();
+
+    classesRepository.save({
+      level: 'EM',
+      module: '3',
+      code: validEnrollmentRequest.class,
+      capacity: 1
+    });
 
     return new EnrollStudent(studentsRepository, modulesRepository, classesRepository);
   };
@@ -72,21 +69,11 @@ describe('EnrollStudent', () => {
   });
 
   test('Should not enroll duplicated student', () => {
-    const student = factoryStudent();
-
-    const enrollmentRequest = Object.assign({}, validEnrollmentRequest, {
-      student: {
-        ...validEnrollmentRequest.student,
-        name: student.name.value,
-        cpf: student.cpf.value
-      }
-    });
-
     const enrollStudent = factoryEnrollStudent();
-    enrollStudent.execute(enrollmentRequest);
+    enrollStudent.execute(validEnrollmentRequest);
 
     expect(() => {
-      enrollStudent.execute(enrollmentRequest);
+      enrollStudent.execute(validEnrollmentRequest);
     }).toThrowError(new ValidationError('Enrollment with duplicated student is not allowed'));
   });
 

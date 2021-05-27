@@ -15,7 +15,9 @@ export default class EnrollStudent {
   execute(enrollmentRequest: IEnrollmentRequest): string {
     const {
       student: {
-        name, cpf, birthDate
+        name,
+        cpf,
+        birthDate
       },
       module,
       class: classCode
@@ -24,6 +26,7 @@ export default class EnrollStudent {
     const student = new Student(name, cpf, birthDate, classCode);
     this.validateExistingStudent(student);
     this.validateStudentMinimumAge(student, module);
+    this.validateClassExist(classCode);
     this.validateClassMaximumCapacity(classCode);
     this.studentsRepository.save(student);
 
@@ -41,6 +44,14 @@ export default class EnrollStudent {
 
     if(module && student.age() < module.minimumAge) {
       throw new ValidationError('Student below minimum age');
+    }
+  }
+
+  private validateClassExist(classCode: string) {
+    const klass = this.classesRepository.findByCode(classCode);
+
+    if(!klass) {
+      throw new ValidationError('Invalid Class code');
     }
   }
 
