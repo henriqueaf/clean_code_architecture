@@ -1,6 +1,5 @@
 {
   "*.ts": [
-    "tsc --noEmit --downlevelIteration",
     "eslint --fix"
   ]
 }
