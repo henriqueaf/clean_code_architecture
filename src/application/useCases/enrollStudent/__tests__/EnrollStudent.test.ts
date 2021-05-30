@@ -142,16 +142,16 @@ describe('EnrollStudent', () => {
       capacity: 1
     });
 
-    let enrollmentRequest = Object.assign({}, validEnrollmentRequest, {
+    const enrollmentRequestFirstStudent = Object.assign({}, validEnrollmentRequest, {
       student: {
         ...validEnrollmentRequest.student,
         class: classCode
       }
     });
 
-    enrollStudent.execute(enrollmentRequest);
+    enrollStudent.execute(enrollmentRequestFirstStudent);
 
-    enrollmentRequest = Object.assign({}, enrollmentRequest, {
+    const enrollmentRequestSecondStudent = Object.assign({}, enrollmentRequestFirstStudent, {
       student: {
         ...validEnrollmentRequest.student,
         cpf: '01234567890',
@@ -160,7 +160,7 @@ describe('EnrollStudent', () => {
     });
 
     expect(() => {
-      enrollStudent.execute(enrollmentRequest);
+      enrollStudent.execute(enrollmentRequestSecondStudent);
     }).toThrowError(new ValidationError('Class is over capacity'));
   });
 });

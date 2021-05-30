@@ -27,7 +27,6 @@ export default class EnrollStudent {
     const student = new Student(name, cpf, birthDate, classCode);
     this.validateExistingStudent(student);
     this.validateStudentMinimumAge(student, module);
-    this.validateClassExist(level, module, classCode);
     this.validateClassMaximumCapacity(level, module, classCode);
     this.studentsRepository.save(student);
 
@@ -45,14 +44,6 @@ export default class EnrollStudent {
 
     if(module && student.age() < module.minimumAge) {
       throw new ValidationError('Student below minimum age');
-    }
-  }
-
-  private validateClassExist(level: string, module: string, classCode: string) {
-    const klass = this.classesRepository.findByLevelModuleCode(level, module, classCode);
-
-    if(!klass) {
-      throw new ValidationError('Invalid Class code');
     }
   }
 
