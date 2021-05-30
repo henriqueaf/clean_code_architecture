@@ -1,4 +1,6 @@
-export default abstract class InMemoryRepository<T> {
+import Repository from '@app/domain/repositoriesInterfaces/Repository';
+
+export default abstract class InMemoryRepository<T> implements Repository<T> {
   protected abstract data: T[];
 
   public save(object: T): boolean {
