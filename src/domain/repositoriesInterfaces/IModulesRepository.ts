@@ -1,6 +1,6 @@
 import Module from '../entities/Module';
-import Repository from './Repository';
+import IRepository from './IRepository';
 
-export interface IModulesRepository extends Repository<Module> {
+export interface IModulesRepository extends IRepository<Module> {
   findByCode(code: string): Module | undefined;
 }

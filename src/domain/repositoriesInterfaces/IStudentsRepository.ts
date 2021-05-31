@@ -1,7 +1,7 @@
 import Student from '../entities/Student';
-import Repository from './Repository';
+import IRepository from './IRepository';
 
-export interface IStudentsRepository extends Repository<Student> {
+export interface IStudentsRepository extends IRepository<Student> {
   findByCpf(cpf: string): Student | undefined;
   allByClassCode(classCode: string): Student[];
 }

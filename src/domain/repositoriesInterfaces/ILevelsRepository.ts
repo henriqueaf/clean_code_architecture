@@ -1,6 +1,6 @@
 import Level from '../entities/Level';
-import Repository from './Repository';
+import IRepository from './IRepository';
 
-export interface ILevelsRepository extends Repository<Level> {
+export interface ILevelsRepository extends IRepository<Level> {
   findByCode(code: string): Level | undefined;
 }
