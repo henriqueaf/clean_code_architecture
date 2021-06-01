@@ -16,3 +16,7 @@ export const yearsAgo = (value: number): Date => {
 export const addDays = (date: Date, days: number): Date => {
   return new Date(date.getTime() + days * DAY_IN_MILLISECONDS);
 };
+
+export const subDays = (date: Date, days: number): Date => {
+  return new Date(date.getTime() - days * DAY_IN_MILLISECONDS);
+};
