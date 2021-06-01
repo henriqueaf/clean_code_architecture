@@ -5,7 +5,7 @@ import { ClassesRepository } from '@app/infrastructure/repositories/inMemory/Cla
 import { InvalidNameError } from '@app/domain/valueObjects/Name';
 import { InvalidCpfError } from '@app/domain/valueObjects/Cpf';
 import { ValidationError } from '../Errors';
-import { yearsAgo } from '@app/utils/DateUtils';
+import { addDays, yearsAgo } from '@app/utils/DateUtils';
 import { EnrollmentsRepository } from '@app/infrastructure/repositories/inMemory/EnrollmentsRepository';
 
 describe('EnrollStudent', () => {
@@ -40,7 +40,9 @@ describe('EnrollStudent', () => {
       level: validEnrollmentRequest.level,
       module: validEnrollmentRequest.module,
       code: validEnrollmentRequest.class,
-      capacity: 1
+      capacity: 1,
+      startDate: new Date(),
+      endDate: addDays(new Date(), 10)
     });
 
     return new EnrollStudent(studentsRepository, modulesRepository, classesRepository, enrollmentsRepository);
@@ -143,7 +145,9 @@ describe('EnrollStudent', () => {
       level: 'EM',
       module: '3',
       code: classCode,
-      capacity: 1
+      capacity: 1,
+      startDate: new Date(),
+      endDate: addDays(new Date(), 10)
     });
 
     const enrollmentRequestFirstStudent = Object.assign({}, validEnrollmentRequest, {
@@ -166,5 +170,29 @@ describe('EnrollStudent', () => {
     expect(() => {
       enrollStudent.execute(enrollmentRequestSecondStudent);
     }).toThrowError(new ValidationError('Class is over capacity'));
+  });
+
+  test('Should not enroll after end of the class', () => {
+    const classesRepository = new ClassesRepository();
+    const classCode = 'A';
+    const oneYearAgo = yearsAgo(1);
+    const onYearAgoPlusTenDays = addDays(oneYearAgo, 10);
+
+    const enrollmentRequest = Object.assign({}, validEnrollmentRequest, {
+      class: classCode
+    });
+
+    classesRepository.save({
+      level: enrollmentRequest.level,
+      module: enrollmentRequest.module,
+      code: classCode,
+      capacity: 10,
+      startDate: oneYearAgo,
+      endDate: onYearAgoPlusTenDays
+    });
+
+    expect(() => {
+      factoryEnrollStudent({ classesRepository }).execute(enrollmentRequest);
+    }).toThrowError(new ValidationError('Class is already finished'));
   });
 });

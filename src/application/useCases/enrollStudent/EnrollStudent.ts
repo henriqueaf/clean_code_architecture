@@ -35,6 +35,7 @@ export default class EnrollStudent {
     this.validateExistingStudent(student);
     this.validateStudentMinimumAge(student, module);
     this.validateClassMaximumCapacity(level, module, classCode);
+    this.validateClassPeriod(level, module, classCode);
 
     const enrollmentCode = this.generateEnrollmentCode(level, module, classCode);
     const enrollment = new Enrollment(student, level, module, classCode, enrollmentCode);
@@ -67,6 +68,15 @@ export default class EnrollStudent {
       throw new ValidationError('Class is over capacity');
     }
   }
+
+  private validateClassPeriod(level: string, module: string, classCode: string): void {
+    const klass = this.classesRepository.findByLevelModuleCode(level, module, classCode);
+
+    if(klass && new Date() > klass.endDate) {
+      throw new ValidationError('Class is already finished');
+    }
+  }
+
   private generateEnrollmentCode(level: string, module: string, classCode: string): string {
     const currentYear = new Date().getFullYear();
     const classEnrollmentsCount = this.enrollmentsRepository.allByLevelModuleClass(level, module, classCode).length;

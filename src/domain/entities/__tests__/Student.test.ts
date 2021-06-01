@@ -1,4 +1,4 @@
-import { yearsAgo } from '../../../utils/DateUtils';
+import { yearsAgo } from '@app/utils/DateUtils';
 import { InvalidStudentBirthdate } from '../errors/StudentErrors';
 import Student from '../Student';
 
