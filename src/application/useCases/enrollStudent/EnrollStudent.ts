@@ -9,6 +9,8 @@ import {
 import Student from '@app/domain/entities/Student';
 import Enrollment from '@app/domain/entities/Enrollment';
 
+const SEQUENCE_MAX_DIGITS = 4;
+
 export default class EnrollStudent {
   constructor(
     private studentsRepository: IStudentsRepository,
@@ -33,22 +35,23 @@ export default class EnrollStudent {
     this.validateExistingStudent(student);
     this.validateStudentMinimumAge(student, module);
     this.validateClassMaximumCapacity(level, module, classCode);
-    this.studentsRepository.save(student);
 
-    const enrollment = new Enrollment(student, level, module, classCode);
+    const enrollmentCode = this.generateEnrollmentCode(level, module, classCode);
+    const enrollment = new Enrollment(student, level, module, classCode, enrollmentCode);
+
+    this.studentsRepository.save(student);
     this.enrollmentsRepository.save(enrollment);
 
-    const classStudentsCount = this.enrollmentsRepository.allByLevelModuleClass(level, module, classCode).length;
-    return enrollment.generateEnrollmentCode(classStudentsCount);
+    return enrollmentCode;
   }
 
-  private validateExistingStudent(student: Student) {
+  private validateExistingStudent(student: Student): void {
     if(this.studentsRepository.findByCpf(student.cpf.value)) {
       throw new ValidationError('Enrollment with duplicated student is not allowed');
     }
   }
 
-  private validateStudentMinimumAge(student: Student, moduleCode: string) {
+  private validateStudentMinimumAge(student: Student, moduleCode: string): void {
     const module = this.modulesRepository.findByCode(moduleCode);
 
     if(module && student.age() < module.minimumAge) {
@@ -56,12 +59,19 @@ export default class EnrollStudent {
     }
   }
 
-  private validateClassMaximumCapacity(level: string, module: string, classCode: string) {
+  private validateClassMaximumCapacity(level: string, module: string, classCode: string): void {
     const klass = this.classesRepository.findByLevelModuleCode(level, module, classCode);
     const classStudentsCount = this.enrollmentsRepository.allByLevelModuleClass(level, module, classCode).length;
 
     if(klass && classStudentsCount >= klass.capacity) {
       throw new ValidationError('Class is over capacity');
     }
+  }
+  private generateEnrollmentCode(level: string, module: string, classCode: string): string {
+    const currentYear = new Date().getFullYear();
+    const classEnrollmentsCount = this.enrollmentsRepository.allByLevelModuleClass(level, module, classCode).length;
+    const sequence = (classEnrollmentsCount + 1).toString().padStart(SEQUENCE_MAX_DIGITS, '0');
+
+    return `${currentYear}${level}${module}${classCode}${sequence}`;
   }
 }
