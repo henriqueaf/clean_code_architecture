@@ -35,7 +35,8 @@ export default class EnrollStudent {
     this.validateExistingStudent(student);
     this.validateStudentMinimumAge(student, module);
     this.validateClassMaximumCapacity(level, module, classCode);
-    this.validateClassPeriod(level, module, classCode);
+    this.validateClassFinish(level, module, classCode);
+    this.validateClassStart(level, module, classCode);
 
     const enrollmentCode = this.generateEnrollmentCode(level, module, classCode);
     const enrollment = new Enrollment(student, level, module, classCode, enrollmentCode);
@@ -69,11 +70,26 @@ export default class EnrollStudent {
     }
   }
 
-  private validateClassPeriod(level: string, module: string, classCode: string): void {
+  private validateClassFinish(level: string, module: string, classCode: string): void {
     const klass = this.classesRepository.findByLevelModuleCode(level, module, classCode);
 
     if(klass && new Date() > klass.endDate) {
       throw new ValidationError('Class is already finished');
+    }
+  }
+
+  private validateClassStart(level: string, module: string, classCode: string): void {
+    const klass = this.classesRepository.findByLevelModuleCode(level, module, classCode);
+
+    if(klass) {
+      const currentDatePeriod = new Date().getTime() - klass.startDate.getTime();
+      const klassTotalPeriod = klass.endDate.getTime() - klass.startDate.getTime();
+
+      const percentage = (currentDatePeriod / klassTotalPeriod) * 100;
+
+      if (percentage > 25) {
+        throw new ValidationError('Class is already started');
+      }
     }
   }
 

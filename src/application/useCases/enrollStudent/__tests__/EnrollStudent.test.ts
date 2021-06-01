@@ -5,7 +5,7 @@ import { ClassesRepository } from '@app/infrastructure/repositories/inMemory/Cla
 import { InvalidNameError } from '@app/domain/valueObjects/Name';
 import { InvalidCpfError } from '@app/domain/valueObjects/Cpf';
 import { ValidationError } from '../Errors';
-import { addDays, yearsAgo } from '@app/utils/DateUtils';
+import { addDays, subDays, yearsAgo } from '@app/utils/DateUtils';
 import { EnrollmentsRepository } from '@app/infrastructure/repositories/inMemory/EnrollmentsRepository';
 
 describe('EnrollStudent', () => {
@@ -174,18 +174,15 @@ describe('EnrollStudent', () => {
 
   test('Should not enroll after end of the class', () => {
     const classesRepository = new ClassesRepository();
-    const classCode = 'A';
     const oneYearAgo = yearsAgo(1);
     const onYearAgoPlusTenDays = addDays(oneYearAgo, 10);
 
-    const enrollmentRequest = Object.assign({}, validEnrollmentRequest, {
-      class: classCode
-    });
+    const enrollmentRequest = validEnrollmentRequest;
 
     classesRepository.save({
       level: enrollmentRequest.level,
       module: enrollmentRequest.module,
-      code: classCode,
+      code: enrollmentRequest.class,
       capacity: 10,
       startDate: oneYearAgo,
       endDate: onYearAgoPlusTenDays
@@ -194,5 +191,27 @@ describe('EnrollStudent', () => {
     expect(() => {
       factoryEnrollStudent({ classesRepository }).execute(enrollmentRequest);
     }).toThrowError(new ValidationError('Class is already finished'));
+  });
+
+  test('Should not enroll after 25% of the start of the class', () => {
+    const classesRepository = new ClassesRepository();
+    const currentDate = new Date();
+    const thirtyDaysAgo = subDays(currentDate, 26);
+    const hundredDaysAfter = addDays(thirtyDaysAgo, 100);
+
+    const enrollmentRequest = validEnrollmentRequest;
+
+    classesRepository.save({
+      level: enrollmentRequest.level,
+      module: enrollmentRequest.module,
+      code: enrollmentRequest.class,
+      capacity: 10,
+      startDate: thirtyDaysAgo,
+      endDate: hundredDaysAfter
+    });
+
+    expect(() => {
+      factoryEnrollStudent({ classesRepository }).execute(enrollmentRequest);
+    }).toThrowError(new ValidationError('Class is already started'));
   });
 });
