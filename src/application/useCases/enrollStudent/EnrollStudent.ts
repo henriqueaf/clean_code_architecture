@@ -1,15 +1,20 @@
 import { ValidationError } from './Errors';
 import { IEnrollmentRequest } from './Interfaces';
-import { IStudentsRepository, IModulesRepository, IClassesRepository } from '@app/domain/repositoriesInterfaces';
+import {
+  IStudentsRepository,
+  IModulesRepository,
+  IClassesRepository,
+  IEnrollmentsRepository
+} from '@app/domain/repositoriesInterfaces';
 import Student from '@app/domain/entities/Student';
-
-export const SEQUENCE_MAX_DIGITS = 4;
+import Enrollment from '@app/domain/entities/Enrollment';
 
 export default class EnrollStudent {
   constructor(
     private studentsRepository: IStudentsRepository,
     private modulesRepository: IModulesRepository,
-    private classesRepository: IClassesRepository
+    private classesRepository: IClassesRepository,
+    private enrollmentsRepository: IEnrollmentsRepository
   ) {}
 
   execute(enrollmentRequest: IEnrollmentRequest): string {
@@ -24,13 +29,17 @@ export default class EnrollStudent {
       class: classCode
     } = enrollmentRequest;
 
-    const student = new Student(name, cpf, birthDate, classCode);
+    const student = new Student(name, cpf, birthDate);
     this.validateExistingStudent(student);
     this.validateStudentMinimumAge(student, module);
     this.validateClassMaximumCapacity(level, module, classCode);
     this.studentsRepository.save(student);
 
-    return this.generateEnrollmentCode(enrollmentRequest);
+    const enrollment = new Enrollment(student, level, module, classCode);
+    this.enrollmentsRepository.save(enrollment);
+
+    const classStudentsCount = this.enrollmentsRepository.allByLevelModuleClass(level, module, classCode).length;
+    return enrollment.generateEnrollmentCode(classStudentsCount);
   }
 
   private validateExistingStudent(student: Student) {
@@ -49,17 +58,10 @@ export default class EnrollStudent {
 
   private validateClassMaximumCapacity(level: string, module: string, classCode: string) {
     const klass = this.classesRepository.findByLevelModuleCode(level, module, classCode);
-    const classStudentsCount = this.studentsRepository.allByClassCode(classCode).length;
+    const classStudentsCount = this.enrollmentsRepository.allByLevelModuleClass(level, module, classCode).length;
 
     if(klass && classStudentsCount >= klass.capacity) {
       throw new ValidationError('Class is over capacity');
     }
-  }
-
-  private generateEnrollmentCode(enrollmentRequest: IEnrollmentRequest): string {
-    const currentYear = new Date().getFullYear();
-    const sequence = this.studentsRepository.count().toString().padStart(SEQUENCE_MAX_DIGITS, '0');
-
-    return `${currentYear}${enrollmentRequest.level}${enrollmentRequest.module}${enrollmentRequest.class}${sequence}`;
   }
 }

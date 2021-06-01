@@ -6,6 +6,7 @@ import { InvalidNameError } from '@app/domain/valueObjects/Name';
 import { InvalidCpfError } from '@app/domain/valueObjects/Cpf';
 import { ValidationError } from '../Errors';
 import { yearsAgo } from '@app/utils/DateUtils';
+import { EnrollmentsRepository } from '@app/infrastructure/repositories/inMemory/EnrollmentsRepository';
 
 describe('EnrollStudent', () => {
   const validEnrollmentRequest = {
@@ -22,15 +23,18 @@ describe('EnrollStudent', () => {
   const factoryEnrollStudent = ({
     studentsRepository,
     modulesRepository,
-    classesRepository
+    classesRepository,
+    enrollmentsRepository
   }: {
     studentsRepository?: StudentsRepository,
     modulesRepository?: ModulesRepository,
-    classesRepository?: ClassesRepository
+    classesRepository?: ClassesRepository,
+    enrollmentsRepository?: EnrollmentsRepository
   } = {}): EnrollStudent => {
     studentsRepository = studentsRepository || new StudentsRepository();
     modulesRepository = modulesRepository || new ModulesRepository();
     classesRepository = classesRepository || new ClassesRepository();
+    enrollmentsRepository = enrollmentsRepository || new EnrollmentsRepository();
 
     classesRepository.save({
       level: validEnrollmentRequest.level,
@@ -39,7 +43,7 @@ describe('EnrollStudent', () => {
       capacity: 1
     });
 
-    return new EnrollStudent(studentsRepository, modulesRepository, classesRepository);
+    return new EnrollStudent(studentsRepository, modulesRepository, classesRepository, enrollmentsRepository);
   };
 
   test('Should not enroll without valid student name', () => {
