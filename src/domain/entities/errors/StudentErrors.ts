@@ -4,10 +4,3 @@ export class InvalidStudentBirthdate extends Error {
     this.name = 'InvalidStudentBirthdate';
   }
 }
-
-export class InvalidStudentClassCode extends Error {
-  constructor() {
-    super('Student Class code must be present');
-    this.name = 'InvalidStudentClassCode';
-  }
-}

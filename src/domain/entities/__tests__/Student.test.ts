@@ -1,17 +1,16 @@
 import { yearsAgo } from '../../../utils/DateUtils';
-import { InvalidStudentBirthdate, InvalidStudentClassCode } from '../errors/StudentErrors';
+import { InvalidStudentBirthdate } from '../errors/StudentErrors';
 import Student from '../Student';
 
 describe('Student', () => {
   const validStudentAttributes = {
     name: 'Ana Maria',
     cpf: '755.525.774-26',
-    birthDate: '2002-03-12',
-    classCode: 'A'
+    birthDate: '2002-03-12'
   };
 
   const factoryStudent = (params = validStudentAttributes): Student => {
-    return new Student(params.name, params.cpf, params.birthDate, params.classCode);
+    return new Student(params.name, params.cpf, params.birthDate);
   };
 
   test('Should throw InvalidStudentBirthdate when an invalid birthDate is provided', () => {
@@ -21,15 +20,6 @@ describe('Student', () => {
     };
 
     expect(() => factoryStudent(invalidAttributes)).toThrow(InvalidStudentBirthdate);
-  });
-
-  test('Should throw InvalidStudentClassCode when classCode is not provided', () => {
-    const invalidAttributes = {
-      ...validStudentAttributes,
-      classCode: ''
-    };
-
-    expect(() => factoryStudent(invalidAttributes)).toThrow(InvalidStudentClassCode);
   });
 
   describe('age()', () => {
