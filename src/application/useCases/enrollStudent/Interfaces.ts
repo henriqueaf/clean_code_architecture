@@ -6,5 +6,6 @@ export interface IEnrollmentRequest {
   },
   level: string,
   module: string,
-  class: string
+  class: string,
+  installments: number
 }

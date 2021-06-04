@@ -4,10 +4,12 @@ import {
   IStudentsRepository,
   IModulesRepository,
   IClassesRepository,
-  IEnrollmentsRepository
+  IEnrollmentsRepository,
+  IInstallmentsRepository
 } from '@app/domain/repositoriesInterfaces';
 import Student from '@app/domain/entities/Student';
 import Enrollment from '@app/domain/entities/Enrollment';
+import Installment from '@app/domain/entities/Installment';
 
 const SEQUENCE_MAX_DIGITS = 4;
 
@@ -16,7 +18,8 @@ export default class EnrollStudent {
     private studentsRepository: IStudentsRepository,
     private modulesRepository: IModulesRepository,
     private classesRepository: IClassesRepository,
-    private enrollmentsRepository: IEnrollmentsRepository
+    private enrollmentsRepository: IEnrollmentsRepository,
+    private installmentsRepository: IInstallmentsRepository
   ) {}
 
   execute(enrollmentRequest: IEnrollmentRequest): string {
@@ -28,7 +31,8 @@ export default class EnrollStudent {
       },
       level,
       module,
-      class: classCode
+      class: classCode,
+      installments
     } = enrollmentRequest;
 
     const student = new Student(name, cpf, birthDate);
@@ -39,10 +43,11 @@ export default class EnrollStudent {
     this.validateClassStart(level, module, classCode);
 
     const enrollmentCode = this.generateEnrollmentCode(level, module, classCode);
-    const enrollment = new Enrollment(student, level, module, classCode, enrollmentCode);
+    const enrollment = new Enrollment(student, level, module, classCode, enrollmentCode, installments);
 
     this.studentsRepository.save(student);
     this.enrollmentsRepository.save(enrollment);
+    this.generateInstallments(enrollment);
 
     return enrollmentCode;
   }
@@ -90,6 +95,27 @@ export default class EnrollStudent {
       if (percentage > 25) {
         throw new ValidationError('Class is already started');
       }
+    }
+  }
+
+  private generateInstallments(enrollment: Enrollment): void {
+    const module = this.modulesRepository.findByCode(enrollment.module);
+
+    if(module) {
+      const installmentValue = Math.trunc(module.price / enrollment.installments);
+      const installmentsRestValue = module.price % enrollment.installments;
+
+      const installments = [];
+
+      for(let i = 1; i <= enrollment.installments; i ++) {
+        if(i === enrollment.installments){
+          installments.push(new Installment(enrollment.code, installmentValue + installmentsRestValue));
+        } else {
+          installments.push(new Installment(enrollment.code, installmentValue));
+        }
+      }
+
+      this.installmentsRepository.saveAll(installments);
     }
   }
 

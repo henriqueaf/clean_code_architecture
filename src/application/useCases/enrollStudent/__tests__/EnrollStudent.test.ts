@@ -7,6 +7,7 @@ import { InvalidCpfError } from '@app/domain/valueObjects/Cpf';
 import { ValidationError } from '../Errors';
 import { addDays, subDays, yearsAgo } from '@app/utils/DateUtils';
 import { EnrollmentsRepository } from '@app/infrastructure/repositories/inMemory/EnrollmentsRepository';
+import { InstallmentsRepository } from '@app/infrastructure/repositories/inMemory/InstallmentsRepository';
 
 describe('EnrollStudent', () => {
   const validEnrollmentRequest = {
@@ -17,24 +18,28 @@ describe('EnrollStudent', () => {
     },
     level: 'EM',
     module: '1',
-    class: 'A'
+    class: 'A',
+    installments: 12
   };
 
   const factoryEnrollStudent = ({
     studentsRepository,
     modulesRepository,
     classesRepository,
-    enrollmentsRepository
+    enrollmentsRepository,
+    installmentsRepository
   }: {
     studentsRepository?: StudentsRepository,
     modulesRepository?: ModulesRepository,
     classesRepository?: ClassesRepository,
-    enrollmentsRepository?: EnrollmentsRepository
+    enrollmentsRepository?: EnrollmentsRepository,
+    installmentsRepository?: InstallmentsRepository
   } = {}): EnrollStudent => {
     studentsRepository = studentsRepository || new StudentsRepository();
     modulesRepository = modulesRepository || new ModulesRepository();
     classesRepository = classesRepository || new ClassesRepository();
     enrollmentsRepository = enrollmentsRepository || new EnrollmentsRepository();
+    installmentsRepository = installmentsRepository || new InstallmentsRepository();
 
     classesRepository.save({
       level: validEnrollmentRequest.level,
@@ -45,7 +50,7 @@ describe('EnrollStudent', () => {
       endDate: addDays(new Date(), 10)
     });
 
-    return new EnrollStudent(studentsRepository, modulesRepository, classesRepository, enrollmentsRepository);
+    return new EnrollStudent(studentsRepository, modulesRepository, classesRepository, enrollmentsRepository, installmentsRepository);
   };
 
   test('Should not enroll without valid student name', () => {
@@ -96,16 +101,11 @@ describe('EnrollStudent', () => {
 
   test('Should generate enrollment code', () => {
     const currentYear = new Date().getFullYear();
-    const enrollmentRequest = {
-      student: {
-        name: 'Maria Carolina Fonseca',
-        cpf: '755.525.774-26',
-        birthDate: '2002-03-12'
-      },
+    const enrollmentRequest = Object.assign({}, validEnrollmentRequest, {
       level: 'EM',
       module: '1',
       class: 'A'
-    };
+    });
 
     expect(factoryEnrollStudent().execute(enrollmentRequest)).toEqual(`${currentYear}EM1A0001`);
   });
@@ -213,5 +213,33 @@ describe('EnrollStudent', () => {
     expect(() => {
       factoryEnrollStudent({ classesRepository }).execute(enrollmentRequest);
     }).toThrowError(new ValidationError('Class is already started'));
+  });
+
+  test('Should generate the invoices based on the number of installments, rounding each amount and applying the rest in the last invoice', () => {
+    const modulesRepository = new ModulesRepository();
+    const installmentsRepository = new InstallmentsRepository();
+    const price = 1500;
+    const installmentsNumber = 14;
+
+    const enrollmentRequest = Object.assign({}, validEnrollmentRequest, {
+      installments: installmentsNumber
+    });
+
+    modulesRepository.save({
+      level: enrollmentRequest.level,
+      minimumAge: 15,
+      code: enrollmentRequest.module,
+      description: '1º ano',
+      price
+    });
+
+    factoryEnrollStudent({ modulesRepository, installmentsRepository }).execute(enrollmentRequest);
+
+    const expectedInstallmentsValue = Math.trunc(price/installmentsNumber);
+    const expectedLastInstallmentValue = expectedInstallmentsValue + price%installmentsNumber;
+
+    expect(installmentsRepository.count()).toBe(installmentsNumber);
+    expect(installmentsRepository.first()?.value).toEqual(expectedInstallmentsValue);
+    expect(installmentsRepository.last()?.value).toEqual(expectedLastInstallmentValue);
   });
 });
