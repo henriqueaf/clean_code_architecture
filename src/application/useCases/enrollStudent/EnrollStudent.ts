@@ -32,8 +32,7 @@ export default class EnrollStudent {
     const klass = this.classesRepository.findByLevelModuleCode(level.code, module.code, enrollmentRequest.class);
     const studentsEnrolledInClass = this.enrollmentsRepository.allByLevelModuleClass(klass.level, klass.module, klass.code).length;
 
-    this.validateExistingStudent(student);
-    this.validateStudentMinimumAge(student, module.code);
+    this.validateExistingEnrollment(student);
     this.validateClassMaximumCapacity(klass, studentsEnrolledInClass);
     this.validateClassFinish(klass);
     this.validateClassStart(klass);
@@ -48,17 +47,9 @@ export default class EnrollStudent {
     return enrollment.code.value;
   }
 
-  private validateExistingStudent(student: Student): void {
+  private validateExistingEnrollment(student: Student): void {
     if(this.enrollmentsRepository.findByCpf(student.cpf.value)) {
       throw new ValidationError('Enrollment with duplicated student is not allowed');
-    }
-  }
-
-  private validateStudentMinimumAge(student: Student, moduleCode: string): void {
-    const module = this.modulesRepository.findByCode(moduleCode);
-
-    if(student.age() < module.minimumAge) {
-      throw new ValidationError('Student below minimum age');
     }
   }
 

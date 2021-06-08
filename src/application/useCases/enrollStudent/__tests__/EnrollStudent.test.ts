@@ -160,7 +160,7 @@ describe('EnrollStudent', () => {
 
     expect(() => {
       factoryEnrollStudent({ modulesRepository }).execute(enrollmentRequest);
-    }).toThrowError(new ValidationError('Student below minimum age'));
+    }).toThrowError(new Error('Student below minimum age'));
   });
 
   test('Should not enroll student over class capacity', () => {

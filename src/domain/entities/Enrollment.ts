@@ -13,6 +13,8 @@ export default class Enrollment {
   installments: number;
 
   constructor(student: Student, level: Level, module: Module, klass: Class, issueDate: Date, sequence: number, installlments: number){
+    if(student.age() < module.minimumAge) throw new Error('Student below minimum age');
+
     this.student = student;
     this.level = level;
     this.module = module;
