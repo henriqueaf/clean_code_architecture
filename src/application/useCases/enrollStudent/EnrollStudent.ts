@@ -5,15 +5,19 @@ import {
   IModulesRepository,
   IClassesRepository,
   IEnrollmentsRepository,
-  IInstallmentsRepository
+  IInstallmentsRepository,
+  ILevelsRepository
 } from '@app/domain/repositoriesInterfaces';
 import Student from '@app/domain/entities/Student';
 import Enrollment from '@app/domain/entities/Enrollment';
 import Installment from '@app/domain/entities/Installment';
+import Class from '@app/domain/entities/Class';
+import Module from '@app/domain/entities/Module';
 
 export default class EnrollStudent {
   constructor(
     private studentsRepository: IStudentsRepository,
+    private levelsRepository: ILevelsRepository,
     private modulesRepository: IModulesRepository,
     private classesRepository: IClassesRepository,
     private enrollmentsRepository: IEnrollmentsRepository,
@@ -21,37 +25,31 @@ export default class EnrollStudent {
   ) {}
 
   execute(enrollmentRequest: IEnrollmentRequest): string {
-    const {
-      student: {
-        name,
-        cpf,
-        birthDate
-      },
-      level,
-      module,
-      class: classCode,
-      installments
-    } = enrollmentRequest;
+    const studentParams = enrollmentRequest.student;
+    const student = new Student(studentParams.name, studentParams.cpf, studentParams.birthDate);
+    const level = this.levelsRepository.findByCode(enrollmentRequest.level);
+    const module = this.modulesRepository.findByCode(enrollmentRequest.module);
+    const klass = this.classesRepository.findByLevelModuleCode(level.code, module.code, enrollmentRequest.class);
+    const studentsEnrolledInClass = this.enrollmentsRepository.allByLevelModuleClass(klass.level, klass.module, klass.code).length;
 
-    const student = new Student(name, cpf, birthDate);
     this.validateExistingStudent(student);
-    this.validateStudentMinimumAge(student, module);
-    this.validateClassMaximumCapacity(level, module, classCode);
-    this.validateClassFinish(level, module, classCode);
-    this.validateClassStart(level, module, classCode);
+    this.validateStudentMinimumAge(student, module.code);
+    this.validateClassMaximumCapacity(klass, studentsEnrolledInClass);
+    this.validateClassFinish(klass);
+    this.validateClassStart(klass);
 
-    const sequence = this.enrollmentsRepository.allByLevelModuleClass(level, module, classCode).length + 1;
-    const enrollment = new Enrollment(student, level, module, classCode, new Date(), sequence, installments);
+    const sequence = studentsEnrolledInClass + 1;
+    const enrollment = new Enrollment(student, level, module, klass, new Date(), sequence, enrollmentRequest.installments);
 
     this.studentsRepository.save(student);
     this.enrollmentsRepository.save(enrollment);
-    this.generateInstallments(enrollment);
+    this.generateInstallments(enrollment, module);
 
     return enrollment.code.value;
   }
 
   private validateExistingStudent(student: Student): void {
-    if(this.studentsRepository.findByCpf(student.cpf.value)) {
+    if(this.enrollmentsRepository.findByCpf(student.cpf.value)) {
       throw new ValidationError('Enrollment with duplicated student is not allowed');
     }
   }
@@ -64,26 +62,19 @@ export default class EnrollStudent {
     }
   }
 
-  private validateClassMaximumCapacity(level: string, module: string, classCode: string): void {
-    const klass = this.classesRepository.findByLevelModuleCode(level, module, classCode);
-    const classStudentsCount = this.enrollmentsRepository.allByLevelModuleClass(level, module, classCode).length;
-
-    if(classStudentsCount >= klass.capacity) {
+  private validateClassMaximumCapacity(klass: Class, studentsEnrolledInClass: number): void {
+    if(studentsEnrolledInClass >= klass.capacity) {
       throw new ValidationError('Class is over capacity');
     }
   }
 
-  private validateClassFinish(level: string, module: string, classCode: string): void {
-    const klass = this.classesRepository.findByLevelModuleCode(level, module, classCode);
-
+  private validateClassFinish(klass: Class): void {
     if(new Date() > klass.endDate) {
       throw new ValidationError('Class is already finished');
     }
   }
 
-  private validateClassStart(level: string, module: string, classCode: string): void {
-    const klass = this.classesRepository.findByLevelModuleCode(level, module, classCode);
-
+  private validateClassStart(klass: Class): void {
     const currentDatePeriod = new Date().getTime() - klass.startDate.getTime();
     const klassTotalPeriod = klass.endDate.getTime() - klass.startDate.getTime();
 
@@ -94,9 +85,7 @@ export default class EnrollStudent {
     }
   }
 
-  private generateInstallments(enrollment: Enrollment): void {
-    const module = this.modulesRepository.findByCode(enrollment.module);
-
+  private generateInstallments(enrollment: Enrollment, module: Module): void {
     const installmentValue = Math.trunc(module.price / enrollment.installments);
     const installmentsRestValue = module.price % enrollment.installments;
 

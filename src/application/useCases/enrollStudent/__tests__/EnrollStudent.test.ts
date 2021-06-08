@@ -1,13 +1,17 @@
 import EnrollStudent from '../EnrollStudent';
-import { StudentsRepository } from '@app/infrastructure/repositories/inMemory/StudentsRepository';
-import { ModulesRepository } from '@app/infrastructure/repositories/inMemory/ModulesRepository';
-import { ClassesRepository } from '@app/infrastructure/repositories/inMemory/ClassesRepository';
+import {
+  ClassesRepository,
+  EnrollmentsRepository,
+  InstallmentsRepository,
+  LevelsRepository,
+  ModulesRepository,
+  StudentsRepository
+} from '@app/infrastructure/repositories/inMemory';
 import { InvalidNameError } from '@app/domain/valueObjects/Name';
 import { InvalidCpfError } from '@app/domain/valueObjects/Cpf';
 import { ValidationError } from '../Errors';
 import { addDays, subDays, yearsAgo } from '@app/utils/DateUtils';
-import { EnrollmentsRepository } from '@app/infrastructure/repositories/inMemory/EnrollmentsRepository';
-import { InstallmentsRepository } from '@app/infrastructure/repositories/inMemory/InstallmentsRepository';
+import { ILevelsRepository } from '@app/domain/repositoriesInterfaces';
 
 describe('EnrollStudent', () => {
   const validEnrollmentRequest = {
@@ -24,22 +28,30 @@ describe('EnrollStudent', () => {
 
   const factoryEnrollStudent = ({
     studentsRepository,
+    levelsRepository,
     modulesRepository,
     classesRepository,
     enrollmentsRepository,
     installmentsRepository
   }: {
     studentsRepository?: StudentsRepository,
+    levelsRepository?: ILevelsRepository,
     modulesRepository?: ModulesRepository,
     classesRepository?: ClassesRepository,
     enrollmentsRepository?: EnrollmentsRepository,
     installmentsRepository?: InstallmentsRepository
   } = {}): EnrollStudent => {
     studentsRepository = studentsRepository || new StudentsRepository();
+    levelsRepository = levelsRepository || new LevelsRepository(),
     modulesRepository = modulesRepository || new ModulesRepository();
     classesRepository = classesRepository || new ClassesRepository();
     enrollmentsRepository = enrollmentsRepository || new EnrollmentsRepository();
     installmentsRepository = installmentsRepository || new InstallmentsRepository();
+
+    levelsRepository.save({
+      code: validEnrollmentRequest.level,
+      description: 'Ensino Médio'
+    });
 
     modulesRepository.save({
       level: validEnrollmentRequest.level,
@@ -58,7 +70,14 @@ describe('EnrollStudent', () => {
       endDate: addDays(new Date(), 10)
     });
 
-    return new EnrollStudent(studentsRepository, modulesRepository, classesRepository, enrollmentsRepository, installmentsRepository);
+    return new EnrollStudent(
+      studentsRepository,
+      levelsRepository,
+      modulesRepository,
+      classesRepository,
+      enrollmentsRepository,
+      installmentsRepository
+    );
   };
 
   test('Should not enroll without valid student name', () => {

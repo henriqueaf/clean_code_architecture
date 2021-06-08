@@ -1,15 +1,6 @@
-import { IStudentsRepository } from './IStudentsRepository';
-import { IModulesRepository } from './IModulesRepository';
-import { IClassesRepository } from './IClassesRepository';
-import { ILevelsRepository } from './ILevelsRepository';
-import { IEnrollmentsRepository } from './IEnrollmentsRepository';
-import { IInstallmentsRepository } from './IInstallmentsRepository';
-
-export {
-  IStudentsRepository,
-  IModulesRepository,
-  IClassesRepository,
-  ILevelsRepository,
-  IEnrollmentsRepository,
-  IInstallmentsRepository
-};
+export { IStudentsRepository } from './IStudentsRepository';
+export { IModulesRepository } from './IModulesRepository';
+export { IClassesRepository } from './IClassesRepository';
+export { ILevelsRepository } from './ILevelsRepository';
+export { IEnrollmentsRepository } from './IEnrollmentsRepository';
+export { IInstallmentsRepository } from './IInstallmentsRepository';

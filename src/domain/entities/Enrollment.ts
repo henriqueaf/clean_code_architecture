@@ -1,20 +1,23 @@
 import EnrollmentCode from '../valueObjects/EnrollmentCode';
+import Class from './Class';
+import Level from './Level';
+import Module from './Module';
 import Student from './Student';
 
 export default class Enrollment {
   student: Student;
-  level: string;
-  module: string;
-  classCode: string;
+  level: Level;
+  module: Module;
+  klass: Class;
   code: EnrollmentCode;
   installments: number;
 
-  constructor(student: Student, level: string, module: string, classCode: string, issueDate: Date, sequence: number, installlments: number){
+  constructor(student: Student, level: Level, module: Module, klass: Class, issueDate: Date, sequence: number, installlments: number){
     this.student = student;
     this.level = level;
     this.module = module;
-    this.classCode = classCode;
-    this.code = new EnrollmentCode(this.level, this.module, this.classCode, issueDate, sequence);
+    this.klass = klass;
+    this.code = new EnrollmentCode(this.level.code, this.module.code, this.klass.code, issueDate, sequence);
     this.installments = installlments;
   }
 }

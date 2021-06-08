@@ -7,7 +7,15 @@ export class EnrollmentsRepository extends InMemoryRepository<Enrollment> implem
 
   allByLevelModuleClass(level: string, module: string, classCode: string): Enrollment[] {
     return this.data.filter(enrollment => {
-      return level === enrollment.level && module === enrollment.module && classCode === enrollment.classCode;
+      return level === enrollment.level.code && module === enrollment.module.code && classCode === enrollment.klass.code;
+    });
+  }
+
+  findByCpf(cpf: string): Enrollment | undefined {
+    const nonDigitsRegex = /\D/g;
+
+    return this.data.find(enrollment => {
+      return cpf.replace(nonDigitsRegex, '') === enrollment.student.cpf.value.replace(nonDigitsRegex, '');
     });
   }
 }
