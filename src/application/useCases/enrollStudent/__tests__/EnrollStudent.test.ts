@@ -41,6 +41,14 @@ describe('EnrollStudent', () => {
     enrollmentsRepository = enrollmentsRepository || new EnrollmentsRepository();
     installmentsRepository = installmentsRepository || new InstallmentsRepository();
 
+    modulesRepository.save({
+      level: validEnrollmentRequest.level,
+      code: validEnrollmentRequest.module,
+      description: '1º Ano',
+      minimumAge: 15,
+      price: 17000
+    });
+
     classesRepository.save({
       level: validEnrollmentRequest.level,
       module: validEnrollmentRequest.module,
