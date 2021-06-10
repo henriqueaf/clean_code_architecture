@@ -2,7 +2,7 @@ import EnrollStudent from '../EnrollStudent';
 import {
   ClassesRepository,
   EnrollmentsRepository,
-  InstallmentsRepository,
+  InvoicesRepository,
   LevelsRepository,
   ModulesRepository,
   StudentsRepository
@@ -33,21 +33,21 @@ describe('EnrollStudent', () => {
     modulesRepository,
     classesRepository,
     enrollmentsRepository,
-    installmentsRepository
+    invoicesRepository
   }: {
     studentsRepository?: StudentsRepository,
     levelsRepository?: ILevelsRepository,
     modulesRepository?: ModulesRepository,
     classesRepository?: ClassesRepository,
     enrollmentsRepository?: EnrollmentsRepository,
-    installmentsRepository?: InstallmentsRepository
+    invoicesRepository?: InvoicesRepository
   } = {}): EnrollStudent => {
     studentsRepository = studentsRepository || new StudentsRepository();
     levelsRepository = levelsRepository || new LevelsRepository(),
     modulesRepository = modulesRepository || new ModulesRepository();
     classesRepository = classesRepository || new ClassesRepository();
     enrollmentsRepository = enrollmentsRepository || new EnrollmentsRepository();
-    installmentsRepository = installmentsRepository || new InstallmentsRepository();
+    invoicesRepository = invoicesRepository || new InvoicesRepository();
 
     levelsRepository.save({
       code: validEnrollmentRequest.level,
@@ -77,7 +77,7 @@ describe('EnrollStudent', () => {
       modulesRepository,
       classesRepository,
       enrollmentsRepository,
-      installmentsRepository
+      invoicesRepository
     );
   };
 
@@ -245,7 +245,7 @@ describe('EnrollStudent', () => {
 
   test('Should generate the invoices based on the number of installments, rounding each amount and applying the rest in the last invoice', () => {
     const modulesRepository = new ModulesRepository();
-    const installmentsRepository = new InstallmentsRepository();
+    const invoicesRepository = new InvoicesRepository();
     const price = 1500;
     const installmentsNumber = 14;
 
@@ -261,13 +261,13 @@ describe('EnrollStudent', () => {
       price
     });
 
-    factoryEnrollStudent({ modulesRepository, installmentsRepository }).execute(enrollmentRequest);
+    factoryEnrollStudent({ modulesRepository, invoicesRepository }).execute(enrollmentRequest);
 
     const expectedInstallmentsValue = Math.trunc(price/installmentsNumber);
     const expectedLastInstallmentValue = expectedInstallmentsValue + price%installmentsNumber;
 
-    expect(installmentsRepository.count()).toBe(installmentsNumber);
-    expect(installmentsRepository.first()?.value).toEqual(expectedInstallmentsValue);
-    expect(installmentsRepository.last()?.value).toEqual(expectedLastInstallmentValue);
+    expect(invoicesRepository.count()).toBe(installmentsNumber);
+    expect(invoicesRepository.first()?.value).toEqual(expectedInstallmentsValue);
+    expect(invoicesRepository.last()?.value).toEqual(expectedLastInstallmentValue);
   });
 });

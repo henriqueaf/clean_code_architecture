@@ -5,12 +5,12 @@ import {
   IModulesRepository,
   IClassesRepository,
   IEnrollmentsRepository,
-  IInstallmentsRepository,
+  IInvoicesRepository,
   ILevelsRepository
 } from '@app/domain/repositoriesInterfaces';
 import Student from '@app/domain/entities/Student';
 import Enrollment from '@app/domain/entities/Enrollment';
-import Installment from '@app/domain/entities/Installment';
+import Installment from '@app/domain/entities/Invoice';
 import Class from '@app/domain/entities/Class';
 import Module from '@app/domain/entities/Module';
 
@@ -21,7 +21,7 @@ export default class EnrollStudent {
     private modulesRepository: IModulesRepository,
     private classesRepository: IClassesRepository,
     private enrollmentsRepository: IEnrollmentsRepository,
-    private installmentsRepository: IInstallmentsRepository
+    private installmentsRepository: IInvoicesRepository
   ) {}
 
   execute(enrollmentRequest: IEnrollmentRequest): string {
@@ -65,9 +65,15 @@ export default class EnrollStudent {
 
     for(let i = 1; i <= enrollment.installments; i ++) {
       if(i === enrollment.installments){
-        installments.push(new Installment(enrollment.code.value, installmentValue + installmentsRestValue));
+        installments.push(new Installment({
+          enrollment: enrollment.code.value,
+          value: installmentValue + installmentsRestValue
+        }));
       } else {
-        installments.push(new Installment(enrollment.code.value, installmentValue));
+        installments.push(new Installment({
+          enrollment: enrollment.code.value,
+          value: installmentValue
+        }));
       }
     }
 
