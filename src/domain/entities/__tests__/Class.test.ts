@@ -12,7 +12,7 @@ describe('Class', () => {
   };
 
   const factoryClass = ({level, module, code, capacity, startDate, endDate} = validClassAttributes): Class => {
-    return new Class(level, module, code, capacity, startDate, endDate);
+    return new Class({level, module, code, capacity, startDate, endDate});
   };
 
   test('Should throw InvalidClassStartdate when an invalid startDate is provided', () => {

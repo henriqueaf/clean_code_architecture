@@ -34,8 +34,6 @@ export default class EnrollStudent {
 
     this.validateExistingEnrollment(student);
     this.validateClassMaximumCapacity(klass, studentsEnrolledInClass);
-    this.validateClassFinish(klass);
-    this.validateClassStart(klass);
 
     const sequence = studentsEnrolledInClass + 1;
     const enrollment = new Enrollment(student, level, module, klass, new Date(), sequence, enrollmentRequest.installments);
@@ -56,23 +54,6 @@ export default class EnrollStudent {
   private validateClassMaximumCapacity(klass: Class, studentsEnrolledInClass: number): void {
     if(studentsEnrolledInClass >= klass.capacity) {
       throw new ValidationError('Class is over capacity');
-    }
-  }
-
-  private validateClassFinish(klass: Class): void {
-    if(new Date() > klass.endDate) {
-      throw new ValidationError('Class is already finished');
-    }
-  }
-
-  private validateClassStart(klass: Class): void {
-    const currentDatePeriod = new Date().getTime() - klass.startDate.getTime();
-    const klassTotalPeriod = klass.endDate.getTime() - klass.startDate.getTime();
-
-    const percentage = (currentDatePeriod / klassTotalPeriod) * 100;
-
-    if (percentage > 25) {
-      throw new ValidationError('Class is already started');
     }
   }
 

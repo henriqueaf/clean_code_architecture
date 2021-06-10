@@ -12,6 +12,7 @@ import { InvalidCpfError } from '@app/domain/valueObjects/Cpf';
 import { ValidationError } from '../Errors';
 import { addDays, subDays, yearsAgo } from '@app/utils/DateUtils';
 import { ILevelsRepository } from '@app/domain/repositoriesInterfaces';
+import Class from '@app/domain/entities/Class';
 
 describe('EnrollStudent', () => {
   const validEnrollmentRequest = {
@@ -61,14 +62,14 @@ describe('EnrollStudent', () => {
       price: 17000
     });
 
-    classesRepository.save({
+    classesRepository.save(new Class({
       level: validEnrollmentRequest.level,
       module: validEnrollmentRequest.module,
       code: validEnrollmentRequest.class,
       capacity: 1,
-      startDate: new Date(),
-      endDate: addDays(new Date(), 10)
-    });
+      startDate: new Date().toISOString(),
+      endDate: addDays(new Date(), 10).toISOString()
+    }));
 
     return new EnrollStudent(
       studentsRepository,
@@ -168,14 +169,14 @@ describe('EnrollStudent', () => {
     const classCode = 'A';
     const enrollStudent = factoryEnrollStudent({ classesRepository });
 
-    classesRepository.save({
+    classesRepository.save(new Class({
       level: 'EM',
       module: '3',
       code: classCode,
       capacity: 1,
-      startDate: new Date(),
-      endDate: addDays(new Date(), 10)
-    });
+      startDate: new Date().toISOString(),
+      endDate: addDays(new Date(), 10).toISOString()
+    }));
 
     const enrollmentRequestFirstStudent = Object.assign({}, validEnrollmentRequest, {
       student: {
@@ -206,18 +207,18 @@ describe('EnrollStudent', () => {
 
     const enrollmentRequest = validEnrollmentRequest;
 
-    classesRepository.save({
+    classesRepository.save(new Class({
       level: enrollmentRequest.level,
       module: enrollmentRequest.module,
       code: enrollmentRequest.class,
       capacity: 10,
-      startDate: oneYearAgo,
-      endDate: onYearAgoPlusTenDays
-    });
+      startDate: oneYearAgo.toISOString(),
+      endDate: onYearAgoPlusTenDays.toISOString()
+    }));
 
     expect(() => {
       factoryEnrollStudent({ classesRepository }).execute(enrollmentRequest);
-    }).toThrowError(new ValidationError('Class is already finished'));
+    }).toThrowError(new Error('Class is already finished'));
   });
 
   test('Should not enroll after 25% of the start of the class', () => {
@@ -228,18 +229,18 @@ describe('EnrollStudent', () => {
 
     const enrollmentRequest = validEnrollmentRequest;
 
-    classesRepository.save({
+    classesRepository.save(new Class({
       level: enrollmentRequest.level,
       module: enrollmentRequest.module,
       code: enrollmentRequest.class,
       capacity: 10,
-      startDate: thirtyDaysAgo,
-      endDate: hundredDaysAfter
-    });
+      startDate: thirtyDaysAgo.toISOString(),
+      endDate: hundredDaysAfter.toISOString()
+    }));
 
     expect(() => {
       factoryEnrollStudent({ classesRepository }).execute(enrollmentRequest);
-    }).toThrowError(new ValidationError('Class is already started'));
+    }).toThrowError(new Error('Class is already started'));
   });
 
   test('Should generate the invoices based on the number of installments, rounding each amount and applying the rest in the last invoice', () => {

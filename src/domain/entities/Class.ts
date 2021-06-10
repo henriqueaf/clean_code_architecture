@@ -8,7 +8,7 @@ export default class Class {
   startDate: Date;
   endDate: Date;
 
-  constructor(level: string, module: string, code: string, capacity: number, startDate: string, endDate: string){
+  constructor({level, module, code, capacity, startDate, endDate}: {level: string, module: string, code: string, capacity: number, startDate: string, endDate: string}){
     this.level = level;
     this.code = code;
     this.module = module;
@@ -23,5 +23,15 @@ export default class Class {
     if(isNaN(this.endDate.getTime())) {
       throw new InvalidClassEndDate();
     }
+  }
+
+  public isFinished(currentDate: Date): boolean {
+    return currentDate > this.endDate;
+  }
+
+  public getProgress(currentDate: Date): number {
+    const currentDatePeriod = currentDate.getTime() - this.startDate.getTime();
+    const klassTotalPeriod = this.endDate.getTime() - this.startDate.getTime();
+    return (currentDatePeriod / klassTotalPeriod) * 100;
   }
 }
