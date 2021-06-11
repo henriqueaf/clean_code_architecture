@@ -10,6 +10,7 @@ export default class Enrollment {
   level: Level;
   module: Module;
   klass: Class;
+  issueDate: Date;
   code: EnrollmentCode;
   installments: number;
   invoices: Invoice[];
@@ -23,6 +24,7 @@ export default class Enrollment {
     this.level = level;
     this.module = module;
     this.klass = klass;
+    this.issueDate = issueDate;
     this.code = new EnrollmentCode(level.code, module.code, klass.code, issueDate, sequence);
     this.installments = installlments;
     this.invoices = [];
@@ -37,12 +39,16 @@ export default class Enrollment {
     for(let i = 1; i < this.installments; i ++) {
       this.invoices.push(new Invoice({
         enrollment: this.code.value,
+        month: this.issueDate.getMonth(),
+        year: this.issueDate.getFullYear(),
         amount: installmentAmount
       }));
     }
 
     this.invoices.push(new Invoice({
       enrollment: this.code.value,
+      month: this.issueDate.getMonth(),
+        year: this.issueDate.getFullYear(),
       amount: installmentsRestAmount
     }));
   }
