@@ -1,9 +1,11 @@
 export default class Invoice {
   enrollment: string;
-  value: number;
+  // month: number;
+  // year: number;
+  amount: number;
 
-  constructor({enrollment, value}: {enrollment: string, value: number}){
+  constructor({enrollment, amount}: {enrollment: string, amount: number}){
     this.enrollment = enrollment;
-    this.value = value;
+    this.amount = amount;
   }
 }

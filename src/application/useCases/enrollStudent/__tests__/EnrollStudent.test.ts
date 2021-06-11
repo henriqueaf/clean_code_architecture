@@ -246,8 +246,8 @@ describe('EnrollStudent', () => {
   test('Should generate the invoices based on the number of installments, rounding each amount and applying the rest in the last invoice', () => {
     const modulesRepository = new ModulesRepository();
     const invoicesRepository = new InvoicesRepository();
-    const price = 1500;
-    const installmentsNumber = 14;
+    const price = 1503.67;
+    const installmentsNumber = 13;
 
     const enrollmentRequest = Object.assign({}, validEnrollmentRequest, {
       installments: installmentsNumber
@@ -263,11 +263,20 @@ describe('EnrollStudent', () => {
 
     factoryEnrollStudent({ modulesRepository, invoicesRepository }).execute(enrollmentRequest);
 
-    const expectedInstallmentsValue = Math.trunc(price/installmentsNumber);
-    const expectedLastInstallmentValue = expectedInstallmentsValue + price%installmentsNumber;
+    const expectedInvoicesAmount = 115.66;
+    const expectedLastInvoiceAmount = 115.75;
 
     expect(invoicesRepository.count()).toBe(installmentsNumber);
-    expect(invoicesRepository.first()?.value).toEqual(expectedInstallmentsValue);
-    expect(invoicesRepository.last()?.value).toEqual(expectedLastInstallmentValue);
+    expect(invoicesRepository.first()?.amount).toEqual(expectedInvoicesAmount);
+    expect(invoicesRepository.last()?.amount).toEqual(expectedLastInvoiceAmount);
+    expect(price.toFixed(2)).toEqual(
+      invoicesRepository.getAll().reduce(
+        (total, invoice) => {
+          total += invoice.amount;
+          return total;
+        },
+        0
+      ).toFixed(2)
+    );
   });
 });

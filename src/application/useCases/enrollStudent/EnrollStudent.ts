@@ -10,7 +10,7 @@ import {
 } from '@app/domain/repositoriesInterfaces';
 import Student from '@app/domain/entities/Student';
 import Enrollment from '@app/domain/entities/Enrollment';
-import Installment from '@app/domain/entities/Invoice';
+import Invoice from '@app/domain/entities/Invoice';
 import Class from '@app/domain/entities/Class';
 import Module from '@app/domain/entities/Module';
 
@@ -21,7 +21,7 @@ export default class EnrollStudent {
     private modulesRepository: IModulesRepository,
     private classesRepository: IClassesRepository,
     private enrollmentsRepository: IEnrollmentsRepository,
-    private installmentsRepository: IInvoicesRepository
+    private invoicesRepository: IInvoicesRepository
   ) {}
 
   execute(enrollmentRequest: IEnrollmentRequest): string {
@@ -58,25 +58,24 @@ export default class EnrollStudent {
   }
 
   private generateInstallments(enrollment: Enrollment, module: Module): void {
-    const installmentValue = Math.trunc(module.price / enrollment.installments);
-    const installmentsRestValue = module.price % enrollment.installments;
+    const installmentAmount = Math.trunc((module.price / enrollment.installments) * 100) / 100;
+    const amountMinusLastInvoice = module.price - (installmentAmount * (enrollment.installments - 1));
+    const installmentsRestAmount = Math.trunc(amountMinusLastInvoice * 100) / 100;
 
-    const installments = [];
+    const invoices = [];
 
-    for(let i = 1; i <= enrollment.installments; i ++) {
-      if(i === enrollment.installments){
-        installments.push(new Installment({
-          enrollment: enrollment.code.value,
-          value: installmentValue + installmentsRestValue
-        }));
-      } else {
-        installments.push(new Installment({
-          enrollment: enrollment.code.value,
-          value: installmentValue
-        }));
-      }
+    for(let i = 1; i < enrollment.installments; i ++) {
+      invoices.push(new Invoice({
+        enrollment: enrollment.code.value,
+        amount: installmentAmount
+      }));
     }
 
-    this.installmentsRepository.saveAll(installments);
+    invoices.push(new Invoice({
+      enrollment: enrollment.code.value,
+      amount: installmentsRestAmount
+    }));
+
+    this.invoicesRepository.saveAll(invoices);
   }
 }

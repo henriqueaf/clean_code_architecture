@@ -18,4 +18,8 @@ export class InvoicesRepository extends InMemoryRepository<Invoice> implements I
   last(): Invoice | undefined {
     return this.data[this.data.length - 1];
   }
+
+  getAll(): Invoice[] {
+    return this.data;
+  }
 }
