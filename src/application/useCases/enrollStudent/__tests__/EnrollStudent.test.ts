@@ -2,7 +2,6 @@ import EnrollStudent from '../EnrollStudent';
 import {
   ClassesRepository,
   EnrollmentsRepository,
-  InvoicesRepository,
   LevelsRepository,
   ModulesRepository,
   StudentsRepository
@@ -32,22 +31,19 @@ describe('EnrollStudent', () => {
     levelsRepository,
     modulesRepository,
     classesRepository,
-    enrollmentsRepository,
-    invoicesRepository
+    enrollmentsRepository
   }: {
     studentsRepository?: StudentsRepository,
     levelsRepository?: ILevelsRepository,
     modulesRepository?: ModulesRepository,
     classesRepository?: ClassesRepository,
-    enrollmentsRepository?: EnrollmentsRepository,
-    invoicesRepository?: InvoicesRepository
+    enrollmentsRepository?: EnrollmentsRepository
   } = {}): EnrollStudent => {
     studentsRepository = studentsRepository || new StudentsRepository();
     levelsRepository = levelsRepository || new LevelsRepository(),
     modulesRepository = modulesRepository || new ModulesRepository();
     classesRepository = classesRepository || new ClassesRepository();
     enrollmentsRepository = enrollmentsRepository || new EnrollmentsRepository();
-    invoicesRepository = invoicesRepository || new InvoicesRepository();
 
     levelsRepository.save({
       code: validEnrollmentRequest.level,
@@ -76,8 +72,7 @@ describe('EnrollStudent', () => {
       levelsRepository,
       modulesRepository,
       classesRepository,
-      enrollmentsRepository,
-      invoicesRepository
+      enrollmentsRepository
     );
   };
 
@@ -245,7 +240,7 @@ describe('EnrollStudent', () => {
 
   test('Should generate the invoices based on the number of installments, rounding each amount and applying the rest in the last invoice', () => {
     const modulesRepository = new ModulesRepository();
-    const invoicesRepository = new InvoicesRepository();
+    const enrollmentsRepository = new EnrollmentsRepository();
     const price = 1503.67;
     const installmentsNumber = 13;
 
@@ -261,16 +256,17 @@ describe('EnrollStudent', () => {
       price
     });
 
-    factoryEnrollStudent({ modulesRepository, invoicesRepository }).execute(enrollmentRequest);
+    const enrollmentCode = factoryEnrollStudent({ modulesRepository, enrollmentsRepository }).execute(enrollmentRequest);
+    const { invoices } = enrollmentsRepository.findByCode(enrollmentCode);
 
     const expectedInvoicesAmount = 115.66;
     const expectedLastInvoiceAmount = 115.75;
 
-    expect(invoicesRepository.count()).toBe(installmentsNumber);
-    expect(invoicesRepository.first()?.amount).toEqual(expectedInvoicesAmount);
-    expect(invoicesRepository.last()?.amount).toEqual(expectedLastInvoiceAmount);
+    expect(invoices.length).toBe(installmentsNumber);
+    expect(invoices[0].amount).toEqual(expectedInvoicesAmount);
+    expect(invoices[invoices.length - 1].amount).toEqual(expectedLastInvoiceAmount);
     expect(price.toFixed(2)).toEqual(
-      invoicesRepository.getAll().reduce(
+      invoices.reduce(
         (total, invoice) => {
           total += invoice.amount;
           return total;

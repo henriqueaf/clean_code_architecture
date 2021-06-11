@@ -5,14 +5,11 @@ import {
   IModulesRepository,
   IClassesRepository,
   IEnrollmentsRepository,
-  IInvoicesRepository,
   ILevelsRepository
 } from '@app/domain/repositoriesInterfaces';
 import Student from '@app/domain/entities/Student';
 import Enrollment from '@app/domain/entities/Enrollment';
-import Invoice from '@app/domain/entities/Invoice';
 import Class from '@app/domain/entities/Class';
-import Module from '@app/domain/entities/Module';
 
 export default class EnrollStudent {
   constructor(
@@ -20,8 +17,7 @@ export default class EnrollStudent {
     private levelsRepository: ILevelsRepository,
     private modulesRepository: IModulesRepository,
     private classesRepository: IClassesRepository,
-    private enrollmentsRepository: IEnrollmentsRepository,
-    private invoicesRepository: IInvoicesRepository
+    private enrollmentsRepository: IEnrollmentsRepository
   ) {}
 
   execute(enrollmentRequest: IEnrollmentRequest): string {
@@ -40,7 +36,6 @@ export default class EnrollStudent {
 
     this.studentsRepository.save(student);
     this.enrollmentsRepository.save(enrollment);
-    this.generateInstallments(enrollment, module);
 
     return enrollment.code.value;
   }
@@ -55,27 +50,5 @@ export default class EnrollStudent {
     if(studentsEnrolledInClass >= klass.capacity) {
       throw new ValidationError('Class is over capacity');
     }
-  }
-
-  private generateInstallments(enrollment: Enrollment, module: Module): void {
-    const installmentAmount = Math.trunc((module.price / enrollment.installments) * 100) / 100;
-    const amountMinusLastInvoice = module.price - (installmentAmount * (enrollment.installments - 1));
-    const installmentsRestAmount = Math.trunc(amountMinusLastInvoice * 100) / 100;
-
-    const invoices = [];
-
-    for(let i = 1; i < enrollment.installments; i ++) {
-      invoices.push(new Invoice({
-        enrollment: enrollment.code.value,
-        amount: installmentAmount
-      }));
-    }
-
-    invoices.push(new Invoice({
-      enrollment: enrollment.code.value,
-      amount: installmentsRestAmount
-    }));
-
-    this.invoicesRepository.saveAll(invoices);
   }
 }

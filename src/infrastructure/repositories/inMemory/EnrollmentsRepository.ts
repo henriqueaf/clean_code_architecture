@@ -18,4 +18,13 @@ export class EnrollmentsRepository extends InMemoryRepository<Enrollment> implem
       return cpf.replace(nonDigitsRegex, '') === enrollment.student.cpf.value.replace(nonDigitsRegex, '');
     });
   }
+
+  findByCode(code: string): Enrollment {
+    const enrollment = this.data.find(enrollment => {
+      return code === enrollment.code.value;
+    });
+
+    if(!enrollment) throw new Error('Enrollment not found!');
+    return enrollment;
+  }
 }
