@@ -52,4 +52,16 @@ export default class Enrollment {
       amount: installmentsRestAmount
     }));
   }
+
+  public invoicesBalance(): number {
+    const balance = this.invoices.reduce(
+      (total, invoice) => {
+        total += invoice.amount;
+        return total;
+      },
+      0
+    ).toFixed(2);
+
+    return Number.parseFloat(balance);
+  }
 }

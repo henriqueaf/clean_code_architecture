@@ -1,5 +1,5 @@
-import Class from '../Class';
-import { InvalidClassStartdate, InvalidClassEndDate } from '../errors/ClassErrors';
+import Class from '@app/domain/entities/Class';
+import { InvalidClassStartdate, InvalidClassEndDate } from '@app/domain/entities/errors/ClassErrors';
 
 describe('Class', () => {
   const validClassAttributes = {

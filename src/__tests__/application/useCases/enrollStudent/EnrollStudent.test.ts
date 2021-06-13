@@ -1,81 +1,17 @@
-import EnrollStudent from '../EnrollStudent';
 import {
   ClassesRepository,
   EnrollmentsRepository,
-  LevelsRepository,
   ModulesRepository,
   StudentsRepository
 } from '@app/infrastructure/repositories/inMemory';
 import { InvalidNameError } from '@app/domain/valueObjects/Name';
 import { InvalidCpfError } from '@app/domain/valueObjects/Cpf';
-import { ValidationError } from '../Errors';
+import { ValidationError } from '@app/application/useCases/enrollStudent/Errors';
 import { addDays, subDays, yearsAgo } from '@app/utils/DateUtils';
-import { ILevelsRepository } from '@app/domain/repositoriesInterfaces';
 import Class from '@app/domain/entities/Class';
+import { factoryEnrollStudent, validEnrollmentRequest } from '@app/__tests__/application/useCases/Factories';
 
 describe('EnrollStudent', () => {
-  const validEnrollmentRequest = {
-    student: {
-      name: 'Ana Maria',
-      cpf: '755.525.774-26',
-      birthDate: '2002-03-12'
-    },
-    level: 'EM',
-    module: '1',
-    class: 'A',
-    installments: 12
-  };
-
-  const factoryEnrollStudent = ({
-    studentsRepository,
-    levelsRepository,
-    modulesRepository,
-    classesRepository,
-    enrollmentsRepository
-  }: {
-    studentsRepository?: StudentsRepository,
-    levelsRepository?: ILevelsRepository,
-    modulesRepository?: ModulesRepository,
-    classesRepository?: ClassesRepository,
-    enrollmentsRepository?: EnrollmentsRepository
-  } = {}): EnrollStudent => {
-    studentsRepository = studentsRepository || new StudentsRepository();
-    levelsRepository = levelsRepository || new LevelsRepository(),
-    modulesRepository = modulesRepository || new ModulesRepository();
-    classesRepository = classesRepository || new ClassesRepository();
-    enrollmentsRepository = enrollmentsRepository || new EnrollmentsRepository();
-
-    levelsRepository.save({
-      code: validEnrollmentRequest.level,
-      description: 'Ensino Médio'
-    });
-
-    modulesRepository.save({
-      level: validEnrollmentRequest.level,
-      code: validEnrollmentRequest.module,
-      description: '1º Ano',
-      minimumAge: 15,
-      price: 17000
-    });
-
-    classesRepository.save(new Class({
-      level: validEnrollmentRequest.level,
-      module: validEnrollmentRequest.module,
-      code: validEnrollmentRequest.class,
-      capacity: 1,
-      startDate: new Date().toISOString(),
-      endDate: addDays(new Date(), 10).toISOString()
-    }));
-
-    return new EnrollStudent(
-      studentsRepository,
-      levelsRepository,
-      modulesRepository,
-      classesRepository,
-      enrollmentsRepository
-    );
-  };
-
   test('Should not enroll without valid student name', () => {
     const enrollmentRequest = Object.assign({}, validEnrollmentRequest, {
       student: {

@@ -1,6 +1,6 @@
 import { yearsAgo } from '@app/utils/DateUtils';
-import { InvalidStudentBirthdate } from '../errors/StudentErrors';
-import Student from '../Student';
+import { InvalidStudentBirthdate } from '@app/domain/entities/errors/StudentErrors';
+import Student from '@app/domain/entities/Student';
 
 describe('Student', () => {
   const validStudentAttributes = {
