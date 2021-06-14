@@ -32,7 +32,15 @@ export default class EnrollStudent {
     this.validateClassMaximumCapacity(klass, studentsEnrolledInClass);
 
     const sequence = studentsEnrolledInClass + 1;
-    const enrollment = new Enrollment(student, level, module, klass, new Date(), sequence, enrollmentRequest.installments);
+    const enrollment = new Enrollment({
+      student,
+      level,
+      module,
+      klass,
+      issueDate: new Date(),
+      sequence,
+      installments: enrollmentRequest.installments
+    });
 
     this.studentsRepository.save(student);
     this.enrollmentsRepository.save(enrollment);

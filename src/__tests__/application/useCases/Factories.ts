@@ -1,6 +1,10 @@
 import EnrollStudent from '@app/application/useCases/enrollStudent/EnrollStudent';
 import GetEnrollment from '@app/application/useCases/getEnrollment/GetEnrollment';
 import Class from '@app/domain/entities/Class';
+import Enrollment from '@app/domain/entities/Enrollment';
+import Level from '@app/domain/entities/Level';
+import Module from '@app/domain/entities/Module';
+import Student from '@app/domain/entities/Student';
 import { ILevelsRepository } from '@app/domain/repositoriesInterfaces';
 import { ClassesRepository, EnrollmentsRepository, LevelsRepository, ModulesRepository, StudentsRepository } from '@app/infrastructure/repositories/inMemory';
 import { addDays } from '@app/utils/DateUtils';
@@ -75,4 +79,62 @@ export const factoryGetEnrollment = ({
   enrollmentsRepository = enrollmentsRepository || new EnrollmentsRepository();
 
   return new GetEnrollment({ enrollmentsRepository });
+};
+
+export const validStudentAttributes = {
+  name: 'Ana Maria',
+  cpf: '755.525.774-26',
+  birthDate: '2002-03-12'
+};
+
+export const factoryStudent = (params = validStudentAttributes): Student => {
+  return new Student(params.name, params.cpf, params.birthDate);
+};
+
+export const validLevelAttributes = {
+  code: 'EF1',
+  description: 'Ensino Fundamental I'
+};
+
+export const factoryLevel = (params = validLevelAttributes): Level => {
+  return new Level(params.code, params.description);
+};
+
+export const validModuleAttributes = {
+  level: validLevelAttributes.code,
+  code: '1',
+  description: '1o Ano',
+  minimumAge: 6,
+  price: 15000
+};
+
+export const factoryModule = (params = validModuleAttributes): Module => {
+  return new Module(params.level, params.code, params.description, params.minimumAge, params.price);
+};
+
+export const validClassAttributes = {
+  level: validModuleAttributes.level,
+  module: validModuleAttributes.code,
+  code: 'A',
+  capacity: 5,
+  startDate: '2021-06-01',
+  endDate: '2021-12-15'
+};
+
+export const factoryClass = (params = validClassAttributes): Class => {
+  return new Class(params);
+};
+
+export const validEnrollmentAttributes = {
+  student: factoryStudent(),
+  level: factoryLevel(),
+  module: factoryModule(),
+  klass: factoryClass(),
+  issueDate: new Date(validClassAttributes.startDate),
+  sequence: 1,
+  installments: validEnrollmentRequest.installments
+};
+
+export const factoryEnrollment = (params = validEnrollmentAttributes): Enrollment => {
+  return new Enrollment(params);
 };

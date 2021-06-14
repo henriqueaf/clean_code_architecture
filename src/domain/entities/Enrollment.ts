@@ -15,7 +15,23 @@ export default class Enrollment {
   installments: number;
   invoices: Invoice[];
 
-  constructor(student: Student, level: Level, module: Module, klass: Class, issueDate: Date, sequence: number, installlments: number){
+  constructor({
+    student,
+    level,
+    module,
+    klass,
+    issueDate,
+    sequence,
+    installments
+  }: {
+    student: Student,
+    level: Level,
+    module: Module,
+    klass: Class,
+    issueDate: Date,
+    sequence: number,
+    installments: number
+  }){
     if(student.age() < module.minimumAge) throw new Error('Student below minimum age');
     if(klass.isFinished(issueDate)) throw new Error('Class is already finished');
     if(klass.getProgress(issueDate) > 25) throw new Error('Class is already started');
@@ -26,7 +42,7 @@ export default class Enrollment {
     this.klass = klass;
     this.issueDate = issueDate;
     this.code = new EnrollmentCode(level.code, module.code, klass.code, issueDate, sequence);
-    this.installments = installlments;
+    this.installments = installments;
     this.invoices = [];
     this.generateInvoices();
   }

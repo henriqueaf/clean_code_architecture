@@ -1,4 +1,4 @@
-import Name, { InvalidNameError } from '../Name';
+import Name, { InvalidNameError } from '@app/domain/valueObjects/Name';
 
 describe('Name', () => {
   test('Should throw an error with an invalid Name', () => {

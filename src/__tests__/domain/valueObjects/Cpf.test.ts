@@ -1,4 +1,4 @@
-import Cpf, { InvalidCpfError } from '../Cpf';
+import Cpf, { InvalidCpfError } from '@app/domain/valueObjects/Cpf';
 
 describe('Cpf', () => {
   test('Should throw an error with an invalid Cpf', () => {
