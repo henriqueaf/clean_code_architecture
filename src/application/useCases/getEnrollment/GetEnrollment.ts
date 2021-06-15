@@ -1,5 +1,5 @@
 import { IEnrollmentsRepository } from '@app/domain/repositoriesInterfaces';
-import { IGetEnrollmentRequest, IGetEnrollmentResponse } from './Interfaces';
+import { GetEnrollmentInputData, GetEnrollmentOutputData } from './DTOs';
 
 export default class GetEnrollment {
   private enrollmentsRepository: IEnrollmentsRepository;
@@ -8,7 +8,7 @@ export default class GetEnrollment {
     this.enrollmentsRepository = enrollmentsRepository;
   }
 
-  execute(enrollmentRequest: IGetEnrollmentRequest): IGetEnrollmentResponse {
+  execute(enrollmentRequest: GetEnrollmentInputData): GetEnrollmentOutputData {
     const enrollment = this.enrollmentsRepository.findByCode(enrollmentRequest.code);
     const invoicesBalance = enrollment.invoicesBalance();
 

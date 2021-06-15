@@ -1,4 +1,4 @@
-import { IGetEnrollmentResponse } from '@app/application/useCases/getEnrollment/Interfaces';
+import { GetEnrollmentOutputData } from '@app/application/useCases/getEnrollment/DTOs';
 import { EnrollmentsRepository } from '@app/infrastructure/repositories/inMemory';
 import { factoryEnrollStudent, validEnrollmentRequest, factoryGetEnrollment } from '@app/__tests__/application/useCases/Factories';
 
@@ -15,6 +15,6 @@ describe('GetEnrollment', () => {
     expect(getEnrollmentResponse).toEqual({
       code: enrollment.code.value,
       invoicesBalance: invoicesBalance
-    } as IGetEnrollmentResponse);
+    } as GetEnrollmentOutputData);
   });
 });
