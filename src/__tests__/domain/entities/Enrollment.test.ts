@@ -31,8 +31,8 @@ describe('Enrollment', () => {
     const onYearAgoPlusTenDays = addDays(oneYearAgo, 10);
 
     const classAttributes = Object.assign({}, validClassAttributes, {
-      startDate: oneYearAgo.toISOString().slice(0,10),
-      endDate: onYearAgoPlusTenDays.toISOString().slice(0,10)
+      startDate: oneYearAgo.toISOString(),
+      endDate: onYearAgoPlusTenDays.toISOString()
     });
 
     const klass = factoryClass(classAttributes);
@@ -45,5 +45,59 @@ describe('Enrollment', () => {
     expect(() => {
       factoryEnrollment(enrollmentAttributes);
     }).toThrowError(new Error('Class is already finished'));
+  });
+
+  test('Should generate invoices when attributes are valid', () => {
+    const totalAmount = 1500;
+    const installments = 2;
+    const currentDate = new Date();
+
+    const moduleAttributes = Object.assign({}, validModuleAttributes, {
+      price: totalAmount
+    });
+
+    const module = factoryModule(moduleAttributes);
+
+    const enrollmentAttributes = Object.assign({}, validEnrollmentAttributes, {
+      module,
+      installments,
+      issueDate: currentDate
+    });
+
+    const enrollment = factoryEnrollment(enrollmentAttributes);
+
+    expect(enrollment.invoices.length).toBe(installments);
+    expect(enrollment.invoices).toEqual([
+      {
+        enrollment: enrollment.code.value,
+        month: currentDate.getMonth(),
+        year: currentDate.getFullYear(),
+        amount: 750
+      },
+      {
+        enrollment: enrollment.code.value,
+        month: currentDate.getMonth(),
+        year: currentDate.getFullYear(),
+        amount: 750
+      }
+    ]);
+  });
+
+  describe('invoicesBalance' , () => {
+    test('Should return the sum of invoices', () => {
+      const totalAmount = 1500;
+
+      const moduleAttributes = Object.assign({}, validModuleAttributes, {
+        price: totalAmount
+      });
+
+      const module = factoryModule(moduleAttributes);
+
+      const enrollmentAttributes = Object.assign({}, validEnrollmentAttributes, {
+        module
+      });
+
+      expect(factoryEnrollment(enrollmentAttributes).invoicesBalance()).toEqual(totalAmount);
+    });
   });
 });
