@@ -1,5 +1,5 @@
 import { ValidationError } from './Errors';
-import { IEnrollmentRequest } from './Interfaces';
+import { EnrollStudentInput } from './DTOs';
 import {
   IStudentsRepository,
   IModulesRepository,
@@ -20,7 +20,7 @@ export default class EnrollStudent {
     private enrollmentsRepository: IEnrollmentsRepository
   ) {}
 
-  execute(enrollmentRequest: IEnrollmentRequest): string {
+  execute(enrollmentRequest: EnrollStudentInput): string {
     const studentParams = enrollmentRequest.student;
     const student = new Student(studentParams.name, studentParams.cpf, studentParams.birthDate);
     const level = this.levelsRepository.findByCode(enrollmentRequest.level);

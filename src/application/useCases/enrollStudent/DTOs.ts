@@ -1,4 +1,4 @@
-export interface IEnrollmentRequest {
+export interface EnrollStudentInput {
   student: {
     name: string;
     cpf: string;
