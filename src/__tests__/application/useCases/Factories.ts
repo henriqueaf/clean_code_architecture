@@ -1,5 +1,6 @@
 import EnrollStudent from '@app/application/useCases/enrollStudent/EnrollStudent';
 import GetEnrollment from '@app/application/useCases/getEnrollment/GetEnrollment';
+import PayInvoice from '@app/application/useCases/payInvoice/PayInvoice';
 import Class from '@app/domain/entities/Class';
 import Enrollment from '@app/domain/entities/Enrollment';
 import Level from '@app/domain/entities/Level';
@@ -137,4 +138,14 @@ export const validEnrollmentAttributes = {
 
 export const factoryEnrollment = (params = validEnrollmentAttributes): Enrollment => {
   return new Enrollment(params);
+};
+
+export const factoryPayInvoice = ({
+  enrollmentsRepository
+}: {
+  enrollmentsRepository?: EnrollmentsRepository
+} = {}): PayInvoice => {
+  enrollmentsRepository = enrollmentsRepository || new EnrollmentsRepository();
+
+  return new PayInvoice({ enrollmentsRepository });
 };

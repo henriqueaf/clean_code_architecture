@@ -1,3 +1,4 @@
+import Invoice from '@app/domain/entities/Invoice';
 import { addDays, yearsAgo } from '@app/utils/DateUtils';
 import { factoryClass, factoryEnrollment, factoryModule, factoryStudent, validClassAttributes, validEnrollmentAttributes, validModuleAttributes, validStudentAttributes } from '@app/__tests__/application/useCases/Factories';
 
@@ -68,18 +69,18 @@ describe('Enrollment', () => {
 
     expect(enrollment.invoices.length).toBe(installments);
     expect(enrollment.invoices).toEqual([
-      {
+      new Invoice({
         enrollment: enrollment.code.value,
         month: currentDate.getMonth(),
         year: currentDate.getFullYear(),
         amount: 750
-      },
-      {
+      }),
+      new Invoice({
         enrollment: enrollment.code.value,
         month: currentDate.getMonth(),
         year: currentDate.getFullYear(),
         amount: 750
-      }
+      })
     ]);
   });
 

@@ -1,4 +1,5 @@
 import EnrollmentCode from '../valueObjects/EnrollmentCode';
+import InvoiceEvent from '../valueObjects/InvoiceEvent';
 import Class from './Class';
 import Invoice from './Invoice';
 import Level from './Level';
@@ -72,12 +73,24 @@ export default class Enrollment {
   public invoicesBalance(): number {
     const balance = this.invoices.reduce(
       (total, invoice) => {
-        total += invoice.amount;
+        total += invoice.getBalance();
         return total;
       },
       0
     ).toFixed(2);
 
     return Number.parseFloat(balance);
+  }
+
+  public getInvoice(month: number, year: number): Invoice {
+    const invoice =  this.invoices.find(invoice => invoice.month === month && invoice.year === year);
+
+    if (!invoice) throw new Error('Invoice not found.');
+    return invoice;
+  }
+
+  public payInvoice(month: number, year:number, amount: number): void {
+    const invoice = this.getInvoice(month, year);
+    invoice.addEvent(new InvoiceEvent('payment', amount));
   }
 }
