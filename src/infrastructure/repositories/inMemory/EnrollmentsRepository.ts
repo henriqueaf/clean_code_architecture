@@ -27,4 +27,13 @@ export class EnrollmentsRepository extends InMemoryRepository<Enrollment> implem
     if(!enrollment) throw new Error('Enrollment not found!');
     return enrollment;
   }
+
+  update(newEnrollment: Enrollment): void {
+    const index = this.data.findIndex(dataEnrollment => {
+      return dataEnrollment.code.value === newEnrollment.code.value;
+    });
+
+    if(index < 0) throw new Error('Enrollment not found!');
+    this.data[index] = newEnrollment;
+  }
 }

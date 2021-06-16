@@ -1,4 +1,5 @@
 import EnrollmentCode from '../valueObjects/EnrollmentCode';
+import EnrollmentStatus from '../valueObjects/EnrollmentStatus';
 import InvoiceEvent from '../valueObjects/InvoiceEvent';
 import Class from './Class';
 import Invoice from './Invoice';
@@ -15,6 +16,7 @@ export default class Enrollment {
   code: EnrollmentCode;
   installments: number;
   invoices: Invoice[];
+  status: EnrollmentStatus;
 
   constructor({
     student,
@@ -45,6 +47,7 @@ export default class Enrollment {
     this.code = new EnrollmentCode(level.code, module.code, klass.code, issueDate, sequence);
     this.installments = installments;
     this.invoices = [];
+    this.status = new EnrollmentStatus('active');
     this.generateInvoices();
   }
 
@@ -92,5 +95,9 @@ export default class Enrollment {
   public payInvoice(month: number, year:number, amount: number): void {
     const invoice = this.getInvoice(month, year);
     invoice.addEvent(new InvoiceEvent('payment', amount));
+  }
+
+  public cancel(): void {
+    this.status = new EnrollmentStatus('cancelled');
   }
 }

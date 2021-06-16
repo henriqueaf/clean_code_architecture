@@ -1,3 +1,4 @@
+import CancelEnrollment from '@app/application/useCases/cancelEnrollment/CancelEnrollment';
 import EnrollStudent from '@app/application/useCases/enrollStudent/EnrollStudent';
 import GetEnrollment from '@app/application/useCases/getEnrollment/GetEnrollment';
 import PayInvoice from '@app/application/useCases/payInvoice/PayInvoice';
@@ -148,4 +149,14 @@ export const factoryPayInvoice = ({
   enrollmentsRepository = enrollmentsRepository || new EnrollmentsRepository();
 
   return new PayInvoice({ enrollmentsRepository });
+};
+
+export const factoryCancelEnrollment = ({
+  enrollmentsRepository
+}: {
+  enrollmentsRepository?: EnrollmentsRepository
+} = {}): CancelEnrollment => {
+  enrollmentsRepository = enrollmentsRepository || new EnrollmentsRepository();
+
+  return new CancelEnrollment({ enrollmentsRepository });
 };
