@@ -8,13 +8,26 @@ export default class GetEnrollment {
     this.enrollmentsRepository = enrollmentsRepository;
   }
 
-  execute(enrollmentRequest: GetEnrollmentInputData): GetEnrollmentOutputData {
-    const enrollment = this.enrollmentsRepository.findByCode(enrollmentRequest.code);
+  execute(getEnrollmentInputData: GetEnrollmentInputData): GetEnrollmentOutputData {
+    const enrollment = this.enrollmentsRepository.findByCode(getEnrollmentInputData.code);
     const invoicesBalance = enrollment.invoicesBalance();
-
-    return {
+    const outputData: GetEnrollmentOutputData = {
       code: enrollment.code.value,
-      invoicesBalance: invoicesBalance
+      invoicesBalance: invoicesBalance,
+      status: enrollment.status.value,
+      invoices: []
     };
+    for(const invoice of enrollment.invoices) {
+      outputData.invoices.push({
+        amount: invoice.amount,
+        status: invoice.getStatus(getEnrollmentInputData.currentDate),
+        dueDate: invoice.dueDate,
+        penalty: invoice.getPenalty(getEnrollmentInputData.currentDate),
+        interest: invoice.getInterets(getEnrollmentInputData.currentDate),
+        balance: invoice.getBalance()
+      });
+    }
+
+    return outputData;
   }
 }

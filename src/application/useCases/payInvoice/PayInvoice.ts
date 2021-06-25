@@ -8,8 +8,8 @@ export default class PayInvoice {
     this.enrollmentsRepository = enrollmentsRepository;
   }
 
-  execute({code, year, month, amount}: PayInvoiceInputData): void {
+  execute({code, year, month, amount, paymentDate}: PayInvoiceInputData): void {
     const enrollment = this.enrollmentsRepository.findByCode(code);
-    enrollment.payInvoice(month, year, amount);
+    enrollment.payInvoice(month, year, amount, paymentDate);
   }
 }

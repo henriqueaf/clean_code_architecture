@@ -71,13 +71,13 @@ describe('Enrollment', () => {
     expect(enrollment.invoices).toEqual([
       new Invoice({
         enrollment: enrollment.code.value,
-        month: currentDate.getMonth(),
+        month: 1,
         year: currentDate.getFullYear(),
         amount: 750
       }),
       new Invoice({
         enrollment: enrollment.code.value,
-        month: currentDate.getMonth(),
+        month: 2,
         year: currentDate.getFullYear(),
         amount: 750
       })

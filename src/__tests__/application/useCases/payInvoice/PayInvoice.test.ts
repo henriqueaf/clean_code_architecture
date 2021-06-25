@@ -1,26 +1,50 @@
-import { PayInvoiceInputData } from '@app/application/useCases/payInvoice/DTOs';
 import { EnrollmentsRepository } from '@app/infrastructure/repositories/inMemory';
-import { factoryEnrollStudent, factoryPayInvoice, validEnrollmentRequest } from '../Factories';
+import { factoryEnrollStudent, factoryGetEnrollment, factoryPayInvoice, validEnrollmentRequest } from '../Factories';
 
 describe('PayInvoice', () => {
   test('Should pay enrollment invoice', () => {
     const enrollmentsRepository = new EnrollmentsRepository();
     const enrollmentRequest = Object.assign({}, validEnrollmentRequest, {
-      installments: 2
+      installments: 12
     });
     const enrollmentCode = factoryEnrollStudent({ enrollmentsRepository }).execute(enrollmentRequest);
-    const enrollment = enrollmentsRepository.findByCode(enrollmentCode);
-    const firstInvoice = enrollment.invoices[0];
+    let getEnrollmentOutputData = factoryGetEnrollment({ enrollmentsRepository }).execute({ code: enrollmentCode, currentDate: new Date('2021-06-20')});
+    const firstInvoice = getEnrollmentOutputData.invoices[0];
 
-    expect(enrollment.invoicesBalance()).not.toEqual(0);
+    expect(getEnrollmentOutputData.invoicesBalance).toEqual(17000);
 
     factoryPayInvoice({ enrollmentsRepository }).execute({
-      code: firstInvoice.enrollment,
-      month: firstInvoice.month,
-      year: firstInvoice.year,
-      amount: firstInvoice.amount
-    } as PayInvoiceInputData);
+      code: enrollmentCode,
+      month: firstInvoice.dueDate.getMonth() + 1,
+      year: firstInvoice.dueDate.getFullYear(),
+      amount: 1416.66,
+      paymentDate: new Date('2021-06-20')
+    });
 
-    expect(enrollment.invoicesBalance()).toEqual(enrollment.module.price - firstInvoice.amount);
+    getEnrollmentOutputData = factoryGetEnrollment({ enrollmentsRepository }).execute({ code: enrollmentCode, currentDate: new Date('2021-06-20')});
+    expect(getEnrollmentOutputData.invoicesBalance).toEqual(18296.25);
+  });
+
+  test('Should pay overdue invoice', () => {
+    const enrollmentsRepository = new EnrollmentsRepository();
+    const enrollmentRequest = Object.assign({}, validEnrollmentRequest, {
+      installments: 12
+    });
+    const enrollmentCode = factoryEnrollStudent({ enrollmentsRepository }).execute(enrollmentRequest);
+    const getEnrollmentOutputDataBefore = factoryGetEnrollment({ enrollmentsRepository }).execute({ code: enrollmentCode, currentDate: new Date('2021-06-20')});
+    const firstInvoice = getEnrollmentOutputDataBefore.invoices[0];
+
+    expect(getEnrollmentOutputDataBefore.invoicesBalance).not.toEqual(0);
+
+    factoryPayInvoice({ enrollmentsRepository }).execute({
+      code: enrollmentCode,
+      month: firstInvoice.dueDate.getMonth() + 1,
+      year: firstInvoice.dueDate.getFullYear(),
+      amount: 4129.57,
+      paymentDate: new Date('2021-06-20')
+    });
+
+    const getEnrollmentOutputDataAfter = factoryGetEnrollment({ enrollmentsRepository }).execute({ code: enrollmentCode, currentDate: new Date('2021-06-20')});
+    expect(getEnrollmentOutputDataAfter.invoices[0].balance).toEqual(0);
   });
 });

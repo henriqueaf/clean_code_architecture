@@ -1,6 +1,7 @@
 import EnrollmentCode from '../valueObjects/EnrollmentCode';
 import EnrollmentStatus from '../valueObjects/EnrollmentStatus';
-import InvoiceEvent from '../valueObjects/InvoiceEvent';
+import InvoiceEvent, { InvoiceEventType } from '../valueObjects/InvoiceEvent';
+import InvoiceStatus from '../valueObjects/InvoiceStatus';
 import Class from './Class';
 import Invoice from './Invoice';
 import Level from './Level';
@@ -54,12 +55,12 @@ export default class Enrollment {
   private generateInvoices(): void {
     const installmentAmount = Math.trunc((this.module.price / this.installments) * 100) / 100;
     const amountMinusLastInvoice = this.module.price - (installmentAmount * (this.installments - 1));
-    const installmentsRestAmount = Math.trunc(amountMinusLastInvoice * 100) / 100;
+    const installmentsRestAmount = Math.trunc((Math.round(amountMinusLastInvoice * 100)/100) * 100) / 100;
 
     for(let i = 1; i < this.installments; i ++) {
       this.invoices.push(new Invoice({
         enrollment: this.code.value,
-        month: this.issueDate.getMonth(),
+        month: i,
         year: this.issueDate.getFullYear(),
         amount: installmentAmount
       }));
@@ -67,22 +68,19 @@ export default class Enrollment {
 
     this.invoices.push(new Invoice({
       enrollment: this.code.value,
-      month: this.issueDate.getMonth(),
-        year: this.issueDate.getFullYear(),
+      month: this.installments,
+      year: this.issueDate.getFullYear(),
       amount: installmentsRestAmount
     }));
   }
 
   public invoicesBalance(): number {
-    const balance = this.invoices.reduce(
-      (total, invoice) => {
-        total += invoice.getBalance();
-        return total;
-      },
-      0
-    ).toFixed(2);
+    const balance = this.invoices.reduce((total, invoice) => {
+      total += invoice.getBalance();
+      return total;
+    }, 0);
 
-    return Number.parseFloat(balance);
+    return Math.abs(Math.round(balance*100)/100);
   }
 
   public getInvoice(month: number, year: number): Invoice {
@@ -92,9 +90,14 @@ export default class Enrollment {
     return invoice;
   }
 
-  public payInvoice(month: number, year:number, amount: number): void {
+  public payInvoice(month: number, year:number, amount: number, paymentDate: Date): void {
     const invoice = this.getInvoice(month, year);
-    invoice.addEvent(new InvoiceEvent('payment', amount));
+
+    if(invoice.getStatus(paymentDate) == InvoiceStatus.Overdue){
+      invoice.addEvent(new InvoiceEvent(InvoiceEventType.Penalty, invoice.getPenalty(paymentDate)));
+      invoice.addEvent(new InvoiceEvent(InvoiceEventType.Interest, invoice.getInterets(paymentDate)));
+    }
+    invoice.addEvent(new InvoiceEvent(InvoiceEventType.Payment, amount));
   }
 
   public cancel(): void {
