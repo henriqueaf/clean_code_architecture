@@ -1,5 +1,5 @@
 import { CancelEnrollmentInputData } from '@app/domain/useCases/cancelEnrollment/DTOs';
-import { EnrollmentsRepository } from '@app/infrastructure/repositories/inMemory';
+import { EnrollmentsRepository } from '@app/adapters/repositories/memory';
 import { factoryEnrollStudent, factoryCancelEnrollment, validEnrollmentRequest, factoryGetEnrollment } from '../Factories';
 
 describe('CancelEnrollment', () => {

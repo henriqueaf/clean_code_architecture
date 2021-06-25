@@ -7,8 +7,8 @@ import Enrollment from '@app/domain/entities/Enrollment';
 import Level from '@app/domain/entities/Level';
 import Module from '@app/domain/entities/Module';
 import Student from '@app/domain/entities/Student';
-import { ILevelsRepository } from '@app/domain/repositoriesInterfaces';
-import { ClassesRepository, EnrollmentsRepository, LevelsRepository, ModulesRepository, StudentsRepository } from '@app/infrastructure/repositories/inMemory';
+import { ILevelsRepository } from '@app/domain/repositories';
+import { ClassesRepository, EnrollmentsRepository, LevelsRepository, ModulesRepository, StudentsRepository } from '@app/adapters/repositories/memory';
 import { addDays } from '@app/utils/DateUtils';
 
 export const validEnrollmentRequest = {

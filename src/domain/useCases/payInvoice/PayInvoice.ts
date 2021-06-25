@@ -1,4 +1,4 @@
-import { IEnrollmentsRepository } from '@app/domain/repositoriesInterfaces';
+import { IEnrollmentsRepository } from '@app/domain/repositories';
 import { PayInvoiceInputData } from './DTOs';
 
 export default class PayInvoice {

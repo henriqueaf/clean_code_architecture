@@ -1,4 +1,4 @@
-import IRepository from '@app/domain/repositoriesInterfaces/IRepository';
+import IRepository from '@app/domain/repositories/IRepository';
 
 export default abstract class InMemoryRepository<T> implements IRepository<T> {
   protected abstract data: T[];

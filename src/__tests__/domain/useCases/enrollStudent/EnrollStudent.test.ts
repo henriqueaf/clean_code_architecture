@@ -3,7 +3,7 @@ import {
   EnrollmentsRepository,
   ModulesRepository,
   StudentsRepository
-} from '@app/infrastructure/repositories/inMemory';
+} from '@app/adapters/repositories/memory';
 import { InvalidNameError } from '@app/domain/valueObjects/Name';
 import { InvalidCpfError } from '@app/domain/valueObjects/Cpf';
 import { ValidationError } from '@app/domain/useCases/enrollStudent/Errors';

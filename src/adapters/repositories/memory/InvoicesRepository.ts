@@ -1,5 +1,5 @@
 import Invoice from '@app/domain/entities/Invoice';
-import { IInvoicesRepository } from '@app/domain/repositoriesInterfaces/IInvoicesRepository';
+import { IInvoicesRepository } from '@app/domain/repositories/IInvoicesRepository';
 import InMemoryRepository from './InMemoryRepository';
 
 export class InvoicesRepository extends InMemoryRepository<Invoice> implements IInvoicesRepository {

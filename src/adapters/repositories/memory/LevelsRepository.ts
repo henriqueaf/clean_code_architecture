@@ -1,5 +1,5 @@
 import Level from '@app/domain/entities/Level';
-import { ILevelsRepository } from '@app/domain/repositoriesInterfaces/ILevelsRepository';
+import { ILevelsRepository } from '@app/domain/repositories/ILevelsRepository';
 import InMemoryRepository from './InMemoryRepository';
 
 export class LevelsRepository extends InMemoryRepository<Level> implements ILevelsRepository {

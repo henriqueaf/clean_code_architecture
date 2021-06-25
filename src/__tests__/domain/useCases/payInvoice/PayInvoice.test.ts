@@ -1,4 +1,4 @@
-import { EnrollmentsRepository } from '@app/infrastructure/repositories/inMemory';
+import { EnrollmentsRepository } from '@app/adapters/repositories/memory';
 import { factoryEnrollStudent, factoryGetEnrollment, factoryPayInvoice, validEnrollmentRequest } from '../Factories';
 
 describe('PayInvoice', () => {

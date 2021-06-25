@@ -1,5 +1,5 @@
 import Enrollment from '@app/domain/entities/Enrollment';
-import { IEnrollmentsRepository } from '@app/domain/repositoriesInterfaces/IEnrollmentsRepository';
+import { IEnrollmentsRepository } from '@app/domain/repositories/IEnrollmentsRepository';
 import InMemoryRepository from './InMemoryRepository';
 
 export class EnrollmentsRepository extends InMemoryRepository<Enrollment> implements IEnrollmentsRepository {

@@ -1,4 +1,4 @@
-import { IEnrollmentsRepository } from '@app/domain/repositoriesInterfaces';
+import { IEnrollmentsRepository } from '@app/domain/repositories';
 import { GetEnrollmentInputData, GetEnrollmentOutputData } from './DTOs';
 
 export default class GetEnrollment {

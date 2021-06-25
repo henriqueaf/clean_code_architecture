@@ -1,6 +1,6 @@
 import { GetEnrollmentOutputData } from '@app/domain/useCases/getEnrollment/DTOs';
 import InvoiceStatus from '@app/domain/valueObjects/InvoiceStatus';
-import { EnrollmentsRepository } from '@app/infrastructure/repositories/inMemory';
+import { EnrollmentsRepository } from '@app/adapters/repositories/memory';
 import { factoryEnrollStudent, validEnrollmentRequest, factoryGetEnrollment } from '@app/__tests__/domain/useCases/Factories';
 
 describe('GetEnrollment', () => {

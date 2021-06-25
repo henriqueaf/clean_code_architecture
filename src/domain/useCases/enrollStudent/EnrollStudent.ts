@@ -6,7 +6,7 @@ import {
   IClassesRepository,
   IEnrollmentsRepository,
   ILevelsRepository
-} from '@app/domain/repositoriesInterfaces';
+} from '@app/domain/repositories';
 import Student from '@app/domain/entities/Student';
 import Enrollment from '@app/domain/entities/Enrollment';
 import Class from '@app/domain/entities/Class';
