@@ -7,8 +7,8 @@ import Enrollment from '@app/domain/entities/Enrollment';
 import Level from '@app/domain/entities/Level';
 import Module from '@app/domain/entities/Module';
 import Student from '@app/domain/entities/Student';
-import { ILevelsRepository } from '@app/domain/repositories';
-import { ClassesRepository, EnrollmentsRepository, LevelsRepository, ModulesRepository, StudentsRepository } from '@app/adapters/repositories/memory';
+import { ClassesRepository, EnrollmentsRepository, ModulesRepository, StudentsRepository } from '@app/adapters/repositories/memory';
+import { LevelsRepository } from '@app/adapters/repositories/database';
 import { addDays } from '@app/utils/DateUtils';
 
 export const validEnrollmentRequest = {
@@ -23,7 +23,7 @@ export const validEnrollmentRequest = {
   installments: 12
 };
 
-export const factoryEnrollStudent = ({
+export const factoryEnrollStudent = async ({
   studentsRepository,
   levelsRepository,
   modulesRepository,
@@ -31,18 +31,18 @@ export const factoryEnrollStudent = ({
   enrollmentsRepository
 }: {
   studentsRepository?: StudentsRepository,
-  levelsRepository?: ILevelsRepository,
+  levelsRepository?: LevelsRepository,
   modulesRepository?: ModulesRepository,
   classesRepository?: ClassesRepository,
   enrollmentsRepository?: EnrollmentsRepository
-} = {}): EnrollStudent => {
+} = {}): Promise<EnrollStudent> => {
   studentsRepository = studentsRepository || new StudentsRepository();
   levelsRepository = levelsRepository || new LevelsRepository(),
   modulesRepository = modulesRepository || new ModulesRepository();
   classesRepository = classesRepository || new ClassesRepository();
   enrollmentsRepository = enrollmentsRepository || new EnrollmentsRepository();
 
-  levelsRepository.save({
+  await levelsRepository.save({
     code: validEnrollmentRequest.level,
     description: 'Ensino Médio'
   });

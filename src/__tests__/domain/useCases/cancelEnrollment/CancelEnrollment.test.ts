@@ -3,9 +3,10 @@ import { EnrollmentsRepository } from '@app/adapters/repositories/memory';
 import { factoryEnrollStudent, factoryCancelEnrollment, validEnrollmentRequest, factoryGetEnrollment } from '../Factories';
 
 describe('CancelEnrollment', () => {
-  test('Should pay enrollment invoice', () => {
+  test('Should cancel enrollment', async () => {
     const enrollmentsRepository = new EnrollmentsRepository();
-    const enrollmentCode = factoryEnrollStudent({ enrollmentsRepository }).execute(validEnrollmentRequest);
+    const enrollStudent = await factoryEnrollStudent({ enrollmentsRepository });
+    const enrollmentCode = await enrollStudent.execute(validEnrollmentRequest);
 
     factoryCancelEnrollment({ enrollmentsRepository }).execute({
       code: enrollmentCode

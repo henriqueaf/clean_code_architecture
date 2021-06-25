@@ -1,6 +1,7 @@
 import Level from '../entities/Level';
-import IRepository from './IRepository';
 
-export interface ILevelsRepository extends IRepository<Level> {
-  findByCode(code: string): Level;
+export interface ILevelsRepository {//extends IRepository<Level> {
+  save({code, description}: {code: string, description: string}): Promise<void>;
+  // count(): Promise<number>;
+  findByCode(code: string): Promise<Level>;
 }

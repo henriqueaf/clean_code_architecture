@@ -4,26 +4,26 @@ import {
   IStudentsRepository,
   IModulesRepository,
   IClassesRepository,
-  IEnrollmentsRepository,
-  ILevelsRepository
+  IEnrollmentsRepository
 } from '@app/domain/repositories';
 import Student from '@app/domain/entities/Student';
 import Enrollment from '@app/domain/entities/Enrollment';
 import Class from '@app/domain/entities/Class';
+import { LevelsRepository } from '@app/adapters/repositories/database';
 
 export default class EnrollStudent {
   constructor(
     private studentsRepository: IStudentsRepository,
-    private levelsRepository: ILevelsRepository,
+    private levelsRepository: LevelsRepository,
     private modulesRepository: IModulesRepository,
     private classesRepository: IClassesRepository,
     private enrollmentsRepository: IEnrollmentsRepository
   ) {}
 
-  execute(enrollmentRequest: EnrollStudentInput): string {
+  async execute(enrollmentRequest: EnrollStudentInput): Promise<string> {
     const studentParams = enrollmentRequest.student;
     const student = new Student(studentParams.name, studentParams.cpf, studentParams.birthDate);
-    const level = this.levelsRepository.findByCode(enrollmentRequest.level);
+    const level = await this.levelsRepository.findByCode(enrollmentRequest.level);
     const module = this.modulesRepository.findByCode(enrollmentRequest.module);
     const klass = this.classesRepository.findByLevelModuleCode(level.code, module.code, enrollmentRequest.class);
     const studentsEnrolledInClass = this.enrollmentsRepository.allByLevelModuleClass(klass.level, klass.module, klass.code).length;
