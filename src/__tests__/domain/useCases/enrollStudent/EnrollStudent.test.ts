@@ -6,10 +6,10 @@ import {
 } from '@app/infrastructure/repositories/inMemory';
 import { InvalidNameError } from '@app/domain/valueObjects/Name';
 import { InvalidCpfError } from '@app/domain/valueObjects/Cpf';
-import { ValidationError } from '@app/application/useCases/enrollStudent/Errors';
+import { ValidationError } from '@app/domain/useCases/enrollStudent/Errors';
 import { addDays, subDays, yearsAgo } from '@app/utils/DateUtils';
 import Class from '@app/domain/entities/Class';
-import { factoryEnrollStudent, validEnrollmentRequest } from '@app/__tests__/application/useCases/Factories';
+import { factoryEnrollStudent, validEnrollmentRequest } from '@app/__tests__/domain/useCases/Factories';
 
 describe('EnrollStudent', () => {
   test('Should not enroll without valid student name', () => {

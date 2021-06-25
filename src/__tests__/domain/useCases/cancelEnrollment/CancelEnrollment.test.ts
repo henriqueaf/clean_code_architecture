@@ -1,4 +1,4 @@
-import { CancelEnrollmentInputData } from '@app/application/useCases/cancelEnrollment/DTOs';
+import { CancelEnrollmentInputData } from '@app/domain/useCases/cancelEnrollment/DTOs';
 import { EnrollmentsRepository } from '@app/infrastructure/repositories/inMemory';
 import { factoryEnrollStudent, factoryCancelEnrollment, validEnrollmentRequest, factoryGetEnrollment } from '../Factories';
 

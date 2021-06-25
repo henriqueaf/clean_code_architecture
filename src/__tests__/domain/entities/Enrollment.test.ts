@@ -1,6 +1,15 @@
 import Invoice from '@app/domain/entities/Invoice';
 import { addDays, yearsAgo } from '@app/utils/DateUtils';
-import { factoryClass, factoryEnrollment, factoryModule, factoryStudent, validClassAttributes, validEnrollmentAttributes, validModuleAttributes, validStudentAttributes } from '@app/__tests__/application/useCases/Factories';
+import {
+  factoryClass,
+  factoryEnrollment,
+  factoryModule,
+  factoryStudent,
+  validClassAttributes,
+  validEnrollmentAttributes,
+  validModuleAttributes,
+  validStudentAttributes
+} from '@app/__tests__/domain/useCases/Factories';
 
 describe('Enrollment', () => {
   test('Should throw Error when student is below minimum age', () => {

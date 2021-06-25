@@ -1,7 +1,7 @@
-import { GetEnrollmentOutputData } from '@app/application/useCases/getEnrollment/DTOs';
+import { GetEnrollmentOutputData } from '@app/domain/useCases/getEnrollment/DTOs';
 import InvoiceStatus from '@app/domain/valueObjects/InvoiceStatus';
 import { EnrollmentsRepository } from '@app/infrastructure/repositories/inMemory';
-import { factoryEnrollStudent, validEnrollmentRequest, factoryGetEnrollment } from '@app/__tests__/application/useCases/Factories';
+import { factoryEnrollStudent, validEnrollmentRequest, factoryGetEnrollment } from '@app/__tests__/domain/useCases/Factories';
 
 describe('GetEnrollment', () => {
   test('Should get enrollment by code with invoice balance', () => {
